@@ -1,3 +1,5 @@
 [workspace]
-members = [ "asset-discovery",
+members = [ 
+    "asset-discovery",
+    "threat-modeling",
 ]
