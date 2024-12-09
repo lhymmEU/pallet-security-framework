@@ -37,12 +37,12 @@ pub struct FunctionThreatAnalysis {
     matched_patterns: Vec<String>,
 }
 
-/// Main threat oracle implementation
-pub struct ThreatOracle {
+/// Main threat model implementation
+pub struct ThreatModel {
     patterns: Vec<ThreatPattern>,
 }
 
-impl ThreatOracle {
+impl ThreatModel {
     pub fn new(patterns: Vec<ThreatPattern>) -> Self {
         Self { patterns }
     }
@@ -97,70 +97,16 @@ impl ThreatOracle {
 }
 
 /// Function to parse function signatures from a text file
-pub fn parse_function_file(content: &str) -> Vec<FunctionSignature> {
-    content.lines()
-        .filter(|line| !line.trim().is_empty())
-        .filter_map(|line| {
-            let parts: Vec<&str> = line.split('|').collect();
-            if parts.len() >= 2 {
-                let name = parts[0].trim().to_string();
-                let params: Vec<Parameter> = parts[1].split(',')
-                    .filter_map(|p| {
-                        let param_parts: Vec<&str> = p.trim().split(':').collect();
-                        if param_parts.len() == 2 {
-                            Some(Parameter {
-                                name: param_parts[0].trim().to_string(),
-                                param_type: param_parts[1].trim().to_string(),
-                            })
-                        } else {
-                            None
-                        }
-                    })
-                    .collect();
-                
-                let return_type = parts.get(2)
-                    .map(|rt| rt.trim().to_string());
-
-                Some(FunctionSignature {
-                    name,
-                    parameters,
-                    return_type,
-                })
-            } else {
-                None
-            }
-        })
-        .collect()
+/// TODO: This function relies of the output format of the asset discovery tool
+pub fn parse_function_file(_content: &str) -> Vec<FunctionSignature> {
+    return vec![];
 }
 
-// Example usage
+// TODO: Need to define "what is a threat pattern"
 pub fn create_default_patterns() -> Vec<ThreatPattern> {
-    vec![
-        ThreatPattern {
-            function_patterns: vec![
-                "transfer".to_string(),
-                "send".to_string(),
-                "mint".to_string(),
-                "burn".to_string(),
-            ],
-            parameter_patterns: vec![
-                "Amount".to_string(),
-                "Balance".to_string(),
-                "AccountId".to_string(),
-            ],
-            risk_score: 80,
-        },
-        ThreatPattern {
-            function_patterns: vec![
-                "set".to_string(),
-                "update".to_string(),
-                "modify".to_string(),
-            ],
-            parameter_patterns: vec![
-                "Config".to_string(),
-                "Storage".to_string(),
-            ],
-            risk_score: 60,
-        },
-    ]
+    return vec![];
+}
+
+fn main() {
+    unimplemented!();
 }
