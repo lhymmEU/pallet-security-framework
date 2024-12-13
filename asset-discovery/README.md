@@ -18,6 +18,16 @@ Security-critical components of a pallet in descending order of severity:
    - System call dependencies
 
 ## TODO
+- ✅ Asset data structure
+- Asset inventory data structure
+- Source code reading function
+   - Input: file path: String
+   - Output: String
+- Syn-based asset discovery function
+   - Input: target assets: AssetType, source code: String
+   - Output: asset inventory: AssetInventory
+
+
 - ✅ Find pallet calls
 - Extract function signatures of found pallet calls
 - Find external function calls & extract their signatures
