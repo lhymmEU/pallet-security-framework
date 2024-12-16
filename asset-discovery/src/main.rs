@@ -1,5 +1,7 @@
 use std::{fs, path::Path};
 use syn::{visit::Visit, Error, File, ImplItem, ItemImpl};
+use quote::quote;
+use serde::Serialize;
 
 fn main() {
     // Read source code
@@ -12,7 +14,74 @@ fn main() {
     result_writer(output).expect("Failed to write output file");
 }
 
+/// Helper function to read the Rust source code file
+fn source_code_reader() -> Result<String, std::io::Error> {
+    // Path to the source code
+    println!("Please enter the path to the source code:");
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read output path");
+    let file_path = Path::new(input.trim());
+
+    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
+
+    // Return the content as string
+    return Ok(file_content);
+}
+
+/// Helper function to write the result to user specified location
+fn result_writer(result: AssetInventory) -> Result<(), std::io::Error> {
+    // Transform AssetInventory into JSON
+    let result_string = result.to_json();
+
+    // Write result to file
+    println!("Please enter the path to the result file:");
+    let mut output_path = String::new();
+    std::io::stdin()
+        .read_line(&mut output_path)
+        .expect("Failed to read output path");
+
+    fs::write(output_path, result_string).expect("Failed to write output file");
+    Ok(())
+}
+
+/// Helper function to parse the source code
+/// It needs to:
+/// 1. Find pallet calls ✅
+/// 2. Extract function signatures of found pallet calls
+/// 3. Find external function calls & extract their signatures
+/// 4. Extract storage items
+/// 5. Find cross-pallet interaction vectors (e.g. AssetsFungibles and etc.)
+/// 6. Write results to AssetInventory
+fn parser(code: String) -> Result<AssetInventory, Error> {
+    // Parse the file into a syn::File
+    let syntax_tree: File = syn::parse_file(&code).expect("Failed to parse the Rust file.");
+
+    // Visit the file to extract functions
+    let mut visitor = FunctionVisitor {
+        functions: Vec::new(),
+        params: Vec::new(),
+    };
+    visitor.visit_file(&syntax_tree);
+
+    let mut asset_inventory = AssetInventory {
+        assets: Vec::new(),
+    };
+
+    // Parse visitor type into Asset type
+    for (function, params) in visitor.params {
+        asset_inventory.assets.push(Asset {
+            name: function.clone(),
+            category: AssetCategory::PublicFunction(function, params),
+        });
+    }
+
+    Ok(asset_inventory)
+}
+
 /// Asset Category
+#[derive(Debug, Serialize)]
 enum AssetCategory {
     /// Point of interest:
     /// 1. Sensitive data handling (e.g. balances, access control lists, etc.)
@@ -57,6 +126,11 @@ enum AssetCategory {
     /// # Arguments
     /// * `String` - The name of the error
     Error(String),
+    /// # Arguments
+    /// * `String` - The name of the public function
+    /// * `Vec<(String, String)>` - The parameters of the public function,
+    ///   where the first string is the parameter name, and the second string is the parameter type
+    PublicFunction(String, Vec<(String, String)>),
     /// Point of interest:
     /// 1. Internal helper functions handling priviledged operations
     /// 2. Validation logic
@@ -69,20 +143,28 @@ enum AssetCategory {
 }
 
 /// Asset Data Structure
+#[derive(Debug, Serialize)]
 struct Asset {
     name: String,
     category: AssetCategory,
 }
 
 /// Asset Inventory Data Structure
+#[derive(Debug, Serialize)]
 struct AssetInventory {
     assets: Vec<Asset>,
+}
+
+impl AssetInventory {
+    fn to_json(&self) -> String {
+        serde_json::to_string(self).expect("Failed to serialize AssetInventory to JSON")
+    }
 }
 
 /// Visitor to find functions in the Rust file.
 struct FunctionVisitor {
     functions: Vec<String>,             // Store function names
-    params: Vec<(String, Vec<String>)>, // (function_name, parameter_names)
+    params: Vec<(String, Vec<(String, String)>)>, // (function name, parameter names and types)
 }
 
 impl<'ast> Visit<'ast> for FunctionVisitor {
@@ -92,81 +174,24 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
             if let ImplItem::Fn(method) = item {
                 let fn_name = method.sig.ident.to_string();
 
-                // Extract parameter names
-                let mut param_names = Vec::new();
+                // Extract parameter names and types
+                let mut param_info = Vec::new();
                 for param in method.sig.inputs.iter() {
                     if let syn::FnArg::Typed(pat_type) = param {
                         if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
-                            param_names.push(pat_ident.ident.to_string());
+                            let param_name = pat_ident.ident.to_string();
+                            let param_type = quote!(#pat_type).to_string();
+                            param_info.push((param_name, param_type));
                         }
                     }
                 }
 
                 self.functions.push(fn_name.clone());
-                self.params.push((fn_name, param_names));
+                self.params.push((fn_name, param_info));
             }
         }
 
         // Continue visiting the implementation block
         syn::visit::visit_item_impl(self, node);
     }
-}
-
-/// Helper function to read the Rust source code file
-fn source_code_reader() -> Result<String, std::io::Error> {
-    // Path to the source code
-    println!("Please enter the path to the source code:");
-    let mut input = String::new();
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read output path");
-    let file_path = Path::new(input.trim());
-
-    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
-
-    // Return the content as string
-    return Ok(file_content);
-}
-
-/// Helper function to write the result to user specified location
-fn result_writer(result: String) -> Result<(), std::io::Error> {
-    // Path to ghe generated result file
-    println!("Please enter the path to the result file:");
-    let mut output_path = String::new();
-    std::io::stdin()
-        .read_line(&mut output_path)
-        .expect("Failed to read output path");
-
-    fs::write(output_path, result).expect("Failed to write output file");
-    Ok(())
-}
-
-/// Helper function to parse the source code
-fn parser(code: String) -> Result<String, Error> {
-    // Parse the file into a syn::File
-    let syntax_tree: File = syn::parse_file(&code).expect("Failed to parse the Rust file.");
-
-    // Visit the file to extract functions
-    let mut visitor = FunctionVisitor {
-        functions: Vec::new(),
-        params: Vec::new(),
-    };
-    visitor.visit_file(&syntax_tree);
-
-    // Write results to file
-    let mut output = String::from("Parsed Functions:\n");
-    for (function, params) in visitor.params {
-        output.push_str(&format!("\n=== Function: {} ===\n", function));
-        if params.is_empty() {
-            output.push_str("  No parameters\n");
-        } else {
-            output.push_str("  Parameters:\n");
-            for param in params {
-                output.push_str(&format!("    • {}\n", param));
-            }
-        }
-        output.push_str(&format!("{}\n", "=".repeat(function.len() + 14)));
-    }
-
-    Ok(output)
 }

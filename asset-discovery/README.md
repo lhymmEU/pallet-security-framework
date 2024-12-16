@@ -26,9 +26,4 @@ Security-critical components of a pallet in descending order of severity:
    - Output: asset inventory: AssetInventory
 
 
-- ✅ Find pallet calls
-- Extract function signatures of found pallet calls
-- Find external function calls & extract their signatures
-- Extract storage items
-- Find cross-pallet interaction vectors (e.g. AssetsFungibles and etc.)
 - Generate two types of report: JSON (for other tools to use), and PDF (for security personnel to review)
