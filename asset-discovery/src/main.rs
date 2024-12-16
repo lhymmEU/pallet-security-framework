@@ -1,5 +1,16 @@
 use std::{fs, path::Path};
-use syn::{visit::Visit, File, ImplItem, ItemImpl};
+use syn::{visit::Visit, Error, File, ImplItem, ItemImpl};
+
+fn main() {
+    // Read source code
+    let file_content = source_code_reader().expect("Failed to read the Rust file.");
+
+    // Parse source code
+    let output = parser(file_content).expect("Failed to parse the Rust file.");
+
+    // Write result to file
+    result_writer(output).expect("Failed to write output file");
+}
 
 /// Asset Category
 enum AssetCategory {
@@ -101,11 +112,39 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
     }
 }
 
-fn main() {
-    let file_content = source_code_reader().expect("Failed to read the Rust file.");
+/// Helper function to read the Rust source code file
+fn source_code_reader() -> Result<String, std::io::Error> {
+    // Path to the source code
+    println!("Please enter the path to the source code:");
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read output path");
+    let file_path = Path::new(input.trim());
 
+    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
+
+    // Return the content as string
+    return Ok(file_content);
+}
+
+/// Helper function to write the result to user specified location
+fn result_writer(result: String) -> Result<(), std::io::Error> {
+    // Path to ghe generated result file
+    println!("Please enter the path to the result file:");
+    let mut output_path = String::new();
+    std::io::stdin()
+        .read_line(&mut output_path)
+        .expect("Failed to read output path");
+
+    fs::write(output_path, result).expect("Failed to write output file");
+    Ok(())
+}
+
+/// Helper function to parse the source code
+fn parser(code: String) -> Result<String, Error> {
     // Parse the file into a syn::File
-    let syntax_tree: File = syn::parse_file(&file_content).expect("Failed to parse the Rust file.");
+    let syntax_tree: File = syn::parse_file(&code).expect("Failed to parse the Rust file.");
 
     // Visit the file to extract functions
     let mut visitor = FunctionVisitor {
@@ -129,34 +168,5 @@ fn main() {
         output.push_str(&format!("{}\n", "=".repeat(function.len() + 14)));
     }
 
-    result_writer(output).expect("Failed to write output file");
-}
-
-/// Helper function to read the Rust source code file
-fn source_code_reader() -> Result<String, std::io::Error> {
-    // Path to the source code
-    println!("Please enter the path to the source code:");
-    let mut input = String::new();
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read output path");
-    let file_path = Path::new(input.trim());
-
-    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
-    
-    // Return the content as string
-    return Ok(file_content);
-}
-
-/// Helper function to write the result to user specified location
-fn result_writer(result: String) -> Result<(), std::io::Error> {
-    // Path to ghe generated result file
-    println!("Please enter the path to the result file:");
-    let mut output_path = String::new();
-    std::io::stdin()
-        .read_line(&mut output_path)
-        .expect("Failed to read output path");
-
-    fs::write(output_path, result).expect("Failed to write output file");
-    Ok(())
+    Ok(output)
 }
