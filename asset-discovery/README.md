@@ -24,6 +24,3 @@ Security-critical components of a pallet in descending order of severity:
 - Syn-based asset discovery function
    - Input: target assets: AssetType, source code: String
    - Output: asset inventory: AssetInventory
-
-
-- Generate two types of report: JSON (for other tools to use), and PDF (for security personnel to review)

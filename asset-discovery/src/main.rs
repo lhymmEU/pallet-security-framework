@@ -1,5 +1,5 @@
-use std::{fs, path::Path};
-use syn::{visit::Visit, Error, File, ImplItem, ItemImpl};
+use std::{collections::HashMap, fs, path::Path};
+use syn::{visit::Visit, Error, File, ItemFn};
 use quote::quote;
 use serde::Serialize;
 
@@ -35,12 +35,7 @@ fn result_writer(result: AssetInventory) -> Result<(), std::io::Error> {
     // Transform AssetInventory into JSON
     let result_string = result.to_json();
 
-    // Write result to file
-    println!("Please enter the path to the result file:");
-    let mut output_path = String::new();
-    std::io::stdin()
-        .read_line(&mut output_path)
-        .expect("Failed to read output path");
+    let output_path = Path::new("./asset-inventory.JSON");
 
     fs::write(output_path, result_string).expect("Failed to write output file");
     Ok(())
@@ -48,9 +43,9 @@ fn result_writer(result: AssetInventory) -> Result<(), std::io::Error> {
 
 /// Helper function to parse the source code
 /// It needs to:
-/// 1. Find pallet calls ✅
-/// 2. Extract function signatures of found pallet calls
-/// 3. Find external function calls & extract their signatures
+/// 1. Find public pallet calls ✅
+/// 2. Extract function signatures of found public pallet calls ✅
+/// 3. Find helper functions
 /// 4. Extract storage items
 /// 5. Find cross-pallet interaction vectors (e.g. AssetsFungibles and etc.)
 /// 6. Write results to AssetInventory
@@ -59,19 +54,22 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     let syntax_tree: File = syn::parse_file(&code).expect("Failed to parse the Rust file.");
 
     // Visit the file to extract functions
-    let mut visitor = FunctionVisitor {
-        functions: Vec::new(),
+    let mut fn_visitor = FunctionVisitor {
+        functions: HashMap::new(),
         params: Vec::new(),
     };
-    visitor.visit_file(&syntax_tree);
+    
+    // Visit all items in the file
+    fn_visitor.visit_file(&syntax_tree);
 
     let mut asset_inventory = AssetInventory {
         assets: Vec::new(),
     };
 
     // Parse visitor type into Asset type
-    for (function, params) in visitor.params {
+    for (function, params) in fn_visitor.params {
         asset_inventory.assets.push(Asset {
+            visibility: fn_visitor.functions.get(&function).unwrap().to_string(),
             name: function.clone(),
             category: AssetCategory::PublicFunction(function, params),
         });
@@ -145,6 +143,7 @@ enum AssetCategory {
 /// Asset Data Structure
 #[derive(Debug, Serialize)]
 struct Asset {
+    visibility: String,
     name: String,
     category: AssetCategory,
 }
@@ -163,16 +162,23 @@ impl AssetInventory {
 
 /// Visitor to find functions in the Rust file.
 struct FunctionVisitor {
-    functions: Vec<String>,             // Store function names
+    functions: HashMap<String, String>,             // Store function name and their visibility
     params: Vec<(String, Vec<(String, String)>)>, // (function name, parameter names and types)
 }
 
 impl<'ast> Visit<'ast> for FunctionVisitor {
-    fn visit_item_impl(&mut self, node: &'ast ItemImpl) {
-        // Visit methods inside the impl block, looking for permissionless calls
+    // Substrate Pallet functions are nested in impl blocks
+    fn visit_item_impl(&mut self, node: &'ast syn::ItemImpl) {
+        // Visit all items in the impl block
         for item in &node.items {
-            if let ImplItem::Fn(method) = item {
+            if let syn::ImplItem::Fn(method) = item {
                 let fn_name = method.sig.ident.to_string();
+                
+                // Determine function visibility
+                let visibility = match &method.vis {
+                    syn::Visibility::Public(_) => "public",
+                    _ => "private"
+                };
 
                 // Extract parameter names and types
                 let mut param_info = Vec::new();
@@ -180,18 +186,16 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
                     if let syn::FnArg::Typed(pat_type) = param {
                         if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
                             let param_name = pat_ident.ident.to_string();
-                            let param_type = quote!(#pat_type).to_string();
+                            let param_type = quote!(#pat_type.ty).to_string();
                             param_info.push((param_name, param_type));
                         }
                     }
                 }
 
-                self.functions.push(fn_name.clone());
+                self.functions.insert(fn_name.clone(), visibility.to_string());
                 self.params.push((fn_name, param_info));
             }
         }
-
-        // Continue visiting the implementation block
         syn::visit::visit_item_impl(self, node);
     }
 }
