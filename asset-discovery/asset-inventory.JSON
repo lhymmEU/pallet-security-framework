@@ -3,27 +3,24 @@
     {
       "visibility": "private",
       "name": "default",
-      "category": { "PublicFunction": ["default", []] }
+      "category": { "Helper": ["default", []] }
     },
     {
       "visibility": "private",
       "name": "build",
-      "category": { "PublicFunction": ["build", []] }
+      "category": { "Helper": ["build", []] }
     },
     {
       "visibility": "private",
       "name": "create_user",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "create_user",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            [
-              "username",
-              "username : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["inviter", "mut inviter : T :: AccountId . ty"],
-            ["account_origin", "account_origin : AccountOrigin . ty"]
+            ["origin", "origin : OriginFor < T >"],
+            ["username", "username : BoundedVec < u8 , T :: StringLimit >"],
+            ["inviter", "mut inviter : T :: AccountId"],
+            ["account_origin", "account_origin : AccountOrigin"]
           ]
         ]
       }
@@ -35,16 +32,13 @@
         "PublicFunction": [
           "create_user_backup",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            ["backup_account", "backup_account : T :: AccountId . ty"],
-            [
-              "username",
-              "username : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["inviter", "mut inviter : T :: AccountId . ty"],
+            ["origin", "origin : OriginFor < T >"],
+            ["backup_account", "backup_account : T :: AccountId"],
+            ["username", "username : BoundedVec < u8 , T :: StringLimit >"],
+            ["inviter", "mut inviter : T :: AccountId"],
             [
               "chat_public_key",
-              "chat_public_key : BoundedVec < u8 , T :: StringLimit > . ty"
+              "chat_public_key : BoundedVec < u8 , T :: StringLimit >"
             ]
           ]
         ]
@@ -57,89 +51,86 @@
         "PublicFunction": [
           "update_user",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
+            ["origin", "origin : OriginFor < T >"],
             [
               "first_name",
-              "first_name : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "first_name : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "last_name",
-              "last_name : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "last_name : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
-            [
-              "bio",
-              "bio : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
-            ],
+            ["bio", "bio : Option < BoundedVec < u8 , T :: StringLimit > >"],
             [
               "username",
-              "username : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "username : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "website",
-              "website : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "website : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "linkedin",
-              "linkedin : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "linkedin : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "twitter",
-              "twitter : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "twitter : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "instagram",
-              "instagram : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "instagram : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "telegram",
-              "telegram : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "telegram : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "youtube_url",
-              "youtube_url : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "youtube_url : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "facebook",
-              "facebook : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "facebook : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "vision",
-              "vision : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "vision : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "tag_line",
-              "tag_line : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "tag_line : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "location",
-              "location : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "location : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "city_token_symbol",
-              "city_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "city_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "industry_token_symbol",
-              "industry_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "industry_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "personal_token_symbol",
-              "personal_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "personal_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "project_token_symbol",
-              "project_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "project_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "profile_picture_colour_hex",
-              "profile_picture_colour_hex : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "profile_picture_colour_hex : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
             [
               "profile_picture_initials",
-              "profile_picture_initials : Option < BoundedVec < u8 , T :: StringLimit > > . ty"
+              "profile_picture_initials : Option < BoundedVec < u8 , T :: StringLimit > >"
             ],
-            ["hourly_rate", "hourly_rate : Option < u32 > . ty"],
-            ["avatar", "avatar : Option < u32 > . ty"]
+            ["hourly_rate", "hourly_rate : Option < u32 >"],
+            ["avatar", "avatar : Option < u32 >"]
           ]
         ]
       }
@@ -151,8 +142,8 @@
         "PublicFunction": [
           "follow_user",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            ["user", "user : T :: AccountId . ty"]
+            ["origin", "origin : OriginFor < T >"],
+            ["user", "user : T :: AccountId"]
           ]
         ]
       }
@@ -164,8 +155,8 @@
         "PublicFunction": [
           "unfollow_user",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            ["user", "user : T :: AccountId . ty"]
+            ["origin", "origin : OriginFor < T >"],
+            ["user", "user : T :: AccountId"]
           ]
         ]
       }
@@ -177,11 +168,11 @@
         "PublicFunction": [
           "send_message",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            ["receiver", "receiver : T :: AccountId . ty"],
+            ["origin", "origin : OriginFor < T >"],
+            ["receiver", "receiver : T :: AccountId"],
             [
               "encrypted_message",
-              "encrypted_message : BoundedVec < u8 , T :: StringLimit > . ty"
+              "encrypted_message : BoundedVec < u8 , T :: StringLimit >"
             ]
           ]
         ]
@@ -194,8 +185,8 @@
         "PublicFunction": [
           "increase_number_remaining_invitee",
           [
-            ["origin", "origin : OriginFor < T > . ty"],
-            ["nb_invitee_more", "nb_invitee_more : u64 . ty"]
+            ["origin", "origin : OriginFor < T >"],
+            ["nb_invitee_more", "nb_invitee_more : u64"]
           ]
         ]
       }
@@ -211,7 +202,7 @@
       "category": {
         "PublicFunction": [
           "user_item",
-          [["account_id", "account_id : & T :: AccountId . ty"]]
+          [["account_id", "account_id : & T :: AccountId"]]
         ]
       }
     },
@@ -219,10 +210,7 @@
       "visibility": "public",
       "name": "get_user_address",
       "category": {
-        "PublicFunction": [
-          "get_user_address",
-          [["hash", "hash : & T :: Hash . ty"]]
-        ]
+        "PublicFunction": ["get_user_address", [["hash", "hash : & T :: Hash"]]]
       }
     },
     {
@@ -232,8 +220,8 @@
         "PublicFunction": [
           "get_followers",
           [
-            ["account_id", "account_id : & T :: AccountId . ty"],
-            ["follower_id", "follower_id : & T :: AccountId . ty"]
+            ["account_id", "account_id : & T :: AccountId"],
+            ["follower_id", "follower_id : & T :: AccountId"]
           ]
         ]
       }
@@ -245,8 +233,8 @@
         "PublicFunction": [
           "get_followings",
           [
-            ["account_id", "account_id : & T :: AccountId . ty"],
-            ["following_id", "following_id : & T :: AccountId . ty"]
+            ["account_id", "account_id : & T :: AccountId"],
+            ["following_id", "following_id : & T :: AccountId"]
           ]
         ]
       }
@@ -258,8 +246,8 @@
         "PublicFunction": [
           "all_messages",
           [
-            ["sender", "sender : T :: AccountId . ty"],
-            ["receiver", "receiver : T :: AccountId . ty"]
+            ["sender", "sender : T :: AccountId"],
+            ["receiver", "receiver : T :: AccountId"]
           ]
         ]
       }
@@ -270,7 +258,7 @@
       "category": {
         "PublicFunction": [
           "team",
-          [["account_id", "account_id : T :: AccountId . ty"]]
+          [["account_id", "account_id : T :: AccountId"]]
         ]
       }
     },
@@ -280,7 +268,7 @@
       "category": {
         "PublicFunction": [
           "calculate_transfer_amount",
-          [["nb_invitee_more", "nb_invitee_more : u64 . ty"]]
+          [["nb_invitee_more", "nb_invitee_more : u64"]]
         ]
       }
     },
@@ -288,76 +276,49 @@
       "visibility": "private",
       "name": "compute_metadata_deposit_fee",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "compute_metadata_deposit_fee",
           [
-            [
-              "first_name",
-              "first_name : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            [
-              "last_name",
-              "last_name : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["bio", "bio : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "username",
-              "username : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            [
-              "location",
-              "location : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["website", "website : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "linkedin",
-              "linkedin : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["twitter", "twitter : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "instagram",
-              "instagram : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            [
-              "telegram",
-              "telegram : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
+            ["first_name", "first_name : BoundedVec < u8 , T :: StringLimit >"],
+            ["last_name", "last_name : BoundedVec < u8 , T :: StringLimit >"],
+            ["bio", "bio : BoundedVec < u8 , T :: StringLimit >"],
+            ["username", "username : BoundedVec < u8 , T :: StringLimit >"],
+            ["location", "location : BoundedVec < u8 , T :: StringLimit >"],
+            ["website", "website : BoundedVec < u8 , T :: StringLimit >"],
+            ["linkedin", "linkedin : BoundedVec < u8 , T :: StringLimit >"],
+            ["twitter", "twitter : BoundedVec < u8 , T :: StringLimit >"],
+            ["instagram", "instagram : BoundedVec < u8 , T :: StringLimit >"],
+            ["telegram", "telegram : BoundedVec < u8 , T :: StringLimit >"],
             [
               "youtube_url",
-              "youtube_url : BoundedVec < u8 , T :: StringLimit > . ty"
+              "youtube_url : BoundedVec < u8 , T :: StringLimit >"
             ],
-            [
-              "facebook",
-              "facebook : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["vision", "vision : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "tag_line",
-              "tag_line : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
+            ["facebook", "facebook : BoundedVec < u8 , T :: StringLimit >"],
+            ["vision", "vision : BoundedVec < u8 , T :: StringLimit >"],
+            ["tag_line", "tag_line : BoundedVec < u8 , T :: StringLimit >"],
             [
               "city_token_symbol",
-              "city_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "city_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "industry_token_symbol",
-              "industry_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "industry_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "personal_token_symbol",
-              "personal_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "personal_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "project_token_symbol",
-              "project_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "project_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "profile_picture_colour_hex",
-              "profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit > . ty"
+              "profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "profile_picture_initials",
-              "profile_picture_initials : BoundedVec < u8 , T :: StringLimit > . ty"
+              "profile_picture_initials : BoundedVec < u8 , T :: StringLimit >"
             ]
           ]
         ]
@@ -367,12 +328,12 @@
       "visibility": "private",
       "name": "compute_message_deposit_fee",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "compute_message_deposit_fee",
           [
             [
               "encrypted_message",
-              "encrypted_message : BoundedVec < u8 , T :: StringLimit > . ty"
+              "encrypted_message : BoundedVec < u8 , T :: StringLimit >"
             ]
           ]
         ]
@@ -382,11 +343,11 @@
       "visibility": "private",
       "name": "update_field",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "update_field",
           [
-            ["original", "original : & mut U . ty"],
-            ["new_value", "new_value : Option < U > . ty"]
+            ["original", "original : & mut U"],
+            ["new_value", "new_value : Option < U >"]
           ]
         ]
       }
@@ -395,41 +356,32 @@
       "visibility": "private",
       "name": "get_inviter",
       "category": {
-        "PublicFunction": [
-          "get_inviter",
-          [["who", "who : T :: AccountId . ty"]]
-        ]
+        "Helper": ["get_inviter", [["who", "who : T :: AccountId"]]]
       }
     },
     {
       "visibility": "private",
       "name": "has_profile",
       "category": {
-        "PublicFunction": [
-          "has_profile",
-          [["who", "who : T :: AccountId . ty"]]
-        ]
+        "Helper": ["has_profile", [["who", "who : T :: AccountId"]]]
       }
     },
     {
       "visibility": "private",
       "name": "get_profile_address",
       "category": {
-        "PublicFunction": [
-          "get_profile_address",
-          [["who", "who : T :: AccountId . ty"]]
-        ]
+        "Helper": ["get_profile_address", [["who", "who : T :: AccountId"]]]
       }
     },
     {
       "visibility": "private",
       "name": "add_sub_account",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "add_sub_account",
           [
-            ["main", "main : T :: AccountId . ty"],
-            ["sub_account", "sub_account : T :: AccountId . ty"]
+            ["main", "main : T :: AccountId"],
+            ["sub_account", "sub_account : T :: AccountId"]
           ]
         ]
       }
@@ -438,11 +390,11 @@
       "visibility": "private",
       "name": "remove_sub_account",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "remove_sub_account",
           [
-            ["main", "main : T :: AccountId . ty"],
-            ["sub_account", "sub_account : T :: AccountId . ty"]
+            ["main", "main : T :: AccountId"],
+            ["sub_account", "sub_account : T :: AccountId"]
           ]
         ]
       }
@@ -451,21 +403,18 @@
       "visibility": "private",
       "name": "get_sub_accounts",
       "category": {
-        "PublicFunction": [
-          "get_sub_accounts",
-          [["main", "main : T :: AccountId . ty"]]
-        ]
+        "Helper": ["get_sub_accounts", [["main", "main : T :: AccountId"]]]
       }
     },
     {
       "visibility": "private",
       "name": "get_new_followers",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "get_new_followers",
           [
-            ["who", "who : T :: AccountId . ty"],
-            ["since", "since : u64 . ty"]
+            ["who", "who : T :: AccountId"],
+            ["since", "since : u64"]
           ]
         ]
       }
@@ -474,11 +423,11 @@
       "visibility": "private",
       "name": "get_new_messages",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "get_new_messages",
           [
-            ["who", "who : T :: AccountId . ty"],
-            ["since", "since : u64 . ty"]
+            ["who", "who : T :: AccountId"],
+            ["since", "since : u64"]
           ]
         ]
       }
@@ -487,76 +436,52 @@
       "visibility": "private",
       "name": "create_user",
       "category": {
-        "PublicFunction": [
+        "Helper": [
           "create_user",
           [
-            ["who", "who : T :: AccountId . ty"],
-            [
-              "first_name",
-              "first_name : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            [
-              "last_name",
-              "last_name : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["bio", "bio : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "username",
-              "username : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["website", "website : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "linkedin",
-              "linkedin : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["twitter", "twitter : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "instagram",
-              "instagram : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            [
-              "telegram",
-              "telegram : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
+            ["who", "who : T :: AccountId"],
+            ["first_name", "first_name : BoundedVec < u8 , T :: StringLimit >"],
+            ["last_name", "last_name : BoundedVec < u8 , T :: StringLimit >"],
+            ["bio", "bio : BoundedVec < u8 , T :: StringLimit >"],
+            ["username", "username : BoundedVec < u8 , T :: StringLimit >"],
+            ["website", "website : BoundedVec < u8 , T :: StringLimit >"],
+            ["linkedin", "linkedin : BoundedVec < u8 , T :: StringLimit >"],
+            ["twitter", "twitter : BoundedVec < u8 , T :: StringLimit >"],
+            ["instagram", "instagram : BoundedVec < u8 , T :: StringLimit >"],
+            ["telegram", "telegram : BoundedVec < u8 , T :: StringLimit >"],
             [
               "youtube_url",
-              "youtube_url : BoundedVec < u8 , T :: StringLimit > . ty"
+              "youtube_url : BoundedVec < u8 , T :: StringLimit >"
             ],
-            [
-              "facebook",
-              "facebook : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["vision", "vision : BoundedVec < u8 , T :: StringLimit > . ty"],
-            [
-              "tag_line",
-              "tag_line : BoundedVec < u8 , T :: StringLimit > . ty"
-            ],
-            ["inviter", "inviter : T :: AccountId . ty"],
+            ["facebook", "facebook : BoundedVec < u8 , T :: StringLimit >"],
+            ["vision", "vision : BoundedVec < u8 , T :: StringLimit >"],
+            ["tag_line", "tag_line : BoundedVec < u8 , T :: StringLimit >"],
+            ["inviter", "inviter : T :: AccountId"],
             [
               "city_token_symbol",
-              "city_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "city_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "industry_token_symbol",
-              "industry_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "industry_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "personal_token_symbol",
-              "personal_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "personal_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "project_token_symbol",
-              "project_token_symbol : BoundedVec < u8 , T :: StringLimit > . ty"
+              "project_token_symbol : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "profile_picture_colour_hex",
-              "profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit > . ty"
+              "profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit >"
             ],
             [
               "profile_picture_initials",
-              "profile_picture_initials : BoundedVec < u8 , T :: StringLimit > . ty"
+              "profile_picture_initials : BoundedVec < u8 , T :: StringLimit >"
             ],
-            ["avatar", "avatar : u32 . ty"]
+            ["avatar", "avatar : u32"]
           ]
         ]
       }
@@ -565,10 +490,7 @@
       "visibility": "private",
       "name": "create_user_account",
       "category": {
-        "PublicFunction": [
-          "create_user_account",
-          [["who", "who : T :: AccountId . ty"]]
-        ]
+        "Helper": ["create_user_account", [["who", "who : T :: AccountId"]]]
       }
     }
   ]

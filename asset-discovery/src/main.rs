@@ -66,12 +66,20 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         assets: Vec::new(),
     };
 
+
     // Parse visitor type into Asset type
     for (function, params) in fn_visitor.params {
+        let visibility = fn_visitor.functions.get(&function).unwrap();
+        let category: AssetCategory;
+        if visibility == "public" {
+            category = AssetCategory::PublicFunction(function.clone(), params);
+        } else {
+            category = AssetCategory::Helper(function.clone(), params);
+        }
         asset_inventory.assets.push(Asset {
-            visibility: fn_visitor.functions.get(&function).unwrap().to_string(),
+            visibility: visibility.to_string(),
             name: function.clone(),
-            category: AssetCategory::PublicFunction(function, params),
+            category,
         });
     }
 
@@ -186,7 +194,7 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
                     if let syn::FnArg::Typed(pat_type) = param {
                         if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
                             let param_name = pat_ident.ident.to_string();
-                            let param_type = quote!(#pat_type.ty).to_string();
+                            let param_type = quote!(#pat_type).to_string();
                             param_info.push((param_name, param_type));
                         }
                     }
