@@ -1,0 +1,230 @@
+Parsed Functions:
+
+=== Function: default ===
+  No parameters
+=====================
+
+=== Function: build ===
+  No parameters
+===================
+
+=== Function: create_user ===
+  Parameters:
+    • origin
+    • username
+    • inviter
+    • account_origin
+=========================
+
+=== Function: create_user_backup ===
+  Parameters:
+    • origin
+    • backup_account
+    • username
+    • inviter
+    • chat_public_key
+================================
+
+=== Function: update_user ===
+  Parameters:
+    • origin
+    • first_name
+    • last_name
+    • bio
+    • username
+    • website
+    • linkedin
+    • twitter
+    • instagram
+    • telegram
+    • youtube_url
+    • facebook
+    • vision
+    • tag_line
+    • location
+    • city_token_symbol
+    • industry_token_symbol
+    • personal_token_symbol
+    • project_token_symbol
+    • profile_picture_colour_hex
+    • profile_picture_initials
+    • hourly_rate
+    • avatar
+=========================
+
+=== Function: follow_user ===
+  Parameters:
+    • origin
+    • user
+=========================
+
+=== Function: unfollow_user ===
+  Parameters:
+    • origin
+    • user
+===========================
+
+=== Function: send_message ===
+  Parameters:
+    • origin
+    • receiver
+    • encrypted_message
+==========================
+
+=== Function: increase_number_remaining_invitee ===
+  Parameters:
+    • origin
+    • nb_invitee_more
+===============================================
+
+=== Function: account_id ===
+  No parameters
+========================
+
+=== Function: user_item ===
+  Parameters:
+    • account_id
+=======================
+
+=== Function: get_user_address ===
+  Parameters:
+    • hash
+==============================
+
+=== Function: get_followers ===
+  Parameters:
+    • account_id
+    • follower_id
+===========================
+
+=== Function: get_followings ===
+  Parameters:
+    • account_id
+    • following_id
+============================
+
+=== Function: all_messages ===
+  Parameters:
+    • sender
+    • receiver
+==========================
+
+=== Function: team ===
+  Parameters:
+    • account_id
+==================
+
+=== Function: calculate_transfer_amount ===
+  Parameters:
+    • nb_invitee_more
+=======================================
+
+=== Function: compute_metadata_deposit_fee ===
+  Parameters:
+    • first_name
+    • last_name
+    • bio
+    • username
+    • location
+    • website
+    • linkedin
+    • twitter
+    • instagram
+    • telegram
+    • youtube_url
+    • facebook
+    • vision
+    • tag_line
+    • city_token_symbol
+    • industry_token_symbol
+    • personal_token_symbol
+    • project_token_symbol
+    • profile_picture_colour_hex
+    • profile_picture_initials
+==========================================
+
+=== Function: compute_message_deposit_fee ===
+  Parameters:
+    • encrypted_message
+=========================================
+
+=== Function: update_field ===
+  Parameters:
+    • original
+    • new_value
+==========================
+
+=== Function: get_inviter ===
+  Parameters:
+    • who
+=========================
+
+=== Function: has_profile ===
+  Parameters:
+    • who
+=========================
+
+=== Function: get_profile_address ===
+  Parameters:
+    • who
+=================================
+
+=== Function: add_sub_account ===
+  Parameters:
+    • main
+    • sub_account
+=============================
+
+=== Function: remove_sub_account ===
+  Parameters:
+    • main
+    • sub_account
+================================
+
+=== Function: get_sub_accounts ===
+  Parameters:
+    • main
+==============================
+
+=== Function: get_new_followers ===
+  Parameters:
+    • who
+    • since
+===============================
+
+=== Function: get_new_messages ===
+  Parameters:
+    • who
+    • since
+==============================
+
+=== Function: create_user ===
+  Parameters:
+    • who
+    • first_name
+    • last_name
+    • bio
+    • username
+    • website
+    • linkedin
+    • twitter
+    • instagram
+    • telegram
+    • youtube_url
+    • facebook
+    • vision
+    • tag_line
+    • inviter
+    • city_token_symbol
+    • industry_token_symbol
+    • personal_token_symbol
+    • project_token_symbol
+    • profile_picture_colour_hex
+    • profile_picture_initials
+    • avatar
+=========================
+
+=== Function: create_user_account ===
+  Parameters:
+    • who
+=================================

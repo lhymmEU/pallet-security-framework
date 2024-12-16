@@ -102,24 +102,7 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
 }
 
 fn main() {
-    // Path to the Rust source file
-    println!("Please enter the path to the Rust file:");
-    let mut input = String::new();
-    // Input the location to the pallet file you want to analyze
-    std::io::stdin()
-        .read_line(&mut input)
-        .expect("Failed to read input");
-    let file_path = Path::new(input.trim());
-
-    // Path to ghe generated result file
-    println!("Please enter the path to the result file:");
-    let mut output_path = String::new();
-    std::io::stdin()
-        .read_line(&mut output_path)
-        .expect("Failed to read output path");
-
-    // Read the file content
-    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
+    let file_content = source_code_reader().expect("Failed to read the Rust file.");
 
     // Parse the file into a syn::File
     let syntax_tree: File = syn::parse_file(&file_content).expect("Failed to parse the Rust file.");
@@ -145,5 +128,35 @@ fn main() {
         }
         output.push_str(&format!("{}\n", "=".repeat(function.len() + 14)));
     }
-    fs::write(output_path.trim(), output).expect("Failed to write output file");
+
+    result_writer(output).expect("Failed to write output file");
+}
+
+/// Helper function to read the Rust source code file
+fn source_code_reader() -> Result<String, std::io::Error> {
+    // Path to the source code
+    println!("Please enter the path to the source code:");
+    let mut input = String::new();
+    std::io::stdin()
+        .read_line(&mut input)
+        .expect("Failed to read output path");
+    let file_path = Path::new(input.trim());
+
+    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
+    
+    // Return the content as string
+    return Ok(file_content);
+}
+
+/// Helper function to write the result to user specified location
+fn result_writer(result: String) -> Result<(), std::io::Error> {
+    // Path to ghe generated result file
+    println!("Please enter the path to the result file:");
+    let mut output_path = String::new();
+    std::io::stdin()
+        .read_line(&mut output_path)
+        .expect("Failed to read output path");
+
+    fs::write(output_path, result).expect("Failed to write output file");
+    Ok(())
 }

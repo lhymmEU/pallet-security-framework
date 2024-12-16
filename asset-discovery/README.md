@@ -19,10 +19,8 @@ Security-critical components of a pallet in descending order of severity:
 
 ## TODO
 - ✅ Asset data structure
-- Asset inventory data structure
-- Source code reading function
-   - Input: file path: String
-   - Output: String
+- ✅ Asset inventory data structure
+- ✅ Source code io functions
 - Syn-based asset discovery function
    - Input: target assets: AssetType, source code: String
    - Output: asset inventory: AssetInventory
