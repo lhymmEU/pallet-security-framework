@@ -61,7 +61,7 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
 
     // Visit the file to extract storage items
     let mut storage_visitor = StorageVisitor {
-        storage_items: Vec::new(),
+        storage_items: HashMap::new(),
     };
 
     // Visit all items in the file
@@ -87,10 +87,10 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     }
 
     // Parse visitor type into Asset type
-    for storage_item in storage_visitor.storage_items {
-        let category = AssetCategory::Storage(storage_item.clone());
+    for (storage_item, visibility) in storage_visitor.storage_items {
+        let category = AssetCategory::Storage(storage_item.clone(), visibility.clone());
         asset_inventory.assets.push(Asset {
-            visibility: "private".to_string(),
+            visibility: visibility.to_string(),
             name: storage_item.clone(),
             category,
         });
@@ -108,7 +108,7 @@ enum AssetCategory {
     ///
     /// # Arguments
     /// * `String` - The name of the storage item
-    Storage(String),
+    Storage(String, String),
     /// Point of interest:
     /// 1. Sensitive information leak through event definition
     /// 2. Internal state leak through event parameters
@@ -225,7 +225,7 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
 
 /// Visitor to find storage items in the Rust file.
 struct StorageVisitor {
-    storage_items: Vec<String>,
+    storage_items: HashMap<String, String>, // (storage item name, storage item visibility)
 }
 
 impl<'ast> Visit<'ast> for StorageVisitor {
@@ -238,12 +238,19 @@ impl<'ast> Visit<'ast> for StorageVisitor {
                     // Look for storage items marked with #[pallet::storage]
                     if let syn::Item::Type(storage_type) = item {
                         // Check if the type has the #[pallet::storage] attribute
-                        if storage_type.attrs.iter().any(|attr| {
-                            // Check if the attribute path matches pallet::storage
-                            attr.path().leading_colon.is_some()
+                        //println!("Attributes for {} is {:#?}", storage_type.ident.to_string(), storage_type.attrs);
+                        if storage_type.attrs.iter().any(|_attr| {
+                            true
                         }) {
                             let storage_name = storage_type.ident.to_string();
-                            self.storage_items.push(storage_name);
+                            match storage_type.vis {
+                                syn::Visibility::Public(_) => {
+                                    self.storage_items.insert(storage_name, "public".to_string());
+                                }
+                                _ => {
+                                    self.storage_items.insert(storage_name, "private".to_string());
+                                }
+                            }
                         }
                     }
                 }
