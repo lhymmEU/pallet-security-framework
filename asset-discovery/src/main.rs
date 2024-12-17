@@ -1,7 +1,7 @@
-use std::{collections::HashMap, fs, path::Path};
-use syn::{visit::Visit, Error, File, ItemFn};
 use quote::quote;
 use serde::Serialize;
+use std::{collections::HashMap, fs, path::Path};
+use syn::{visit::Visit, Error, File, ItemFn, Meta, PathSegment};
 
 fn main() {
     // Read source code
@@ -58,14 +58,17 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         functions: HashMap::new(),
         params: Vec::new(),
     };
-    
-    // Visit all items in the file
-    fn_visitor.visit_file(&syntax_tree);
 
-    let mut asset_inventory = AssetInventory {
-        assets: Vec::new(),
+    // Visit the file to extract storage items
+    let mut storage_visitor = StorageVisitor {
+        storage_items: Vec::new(),
     };
 
+    // Visit all items in the file
+    fn_visitor.visit_file(&syntax_tree);
+    storage_visitor.visit_file(&syntax_tree);
+
+    let mut asset_inventory = AssetInventory { assets: Vec::new() };
 
     // Parse visitor type into Asset type
     for (function, params) in fn_visitor.params {
@@ -79,6 +82,16 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         asset_inventory.assets.push(Asset {
             visibility: visibility.to_string(),
             name: function.clone(),
+            category,
+        });
+    }
+
+    // Parse visitor type into Asset type
+    for storage_item in storage_visitor.storage_items {
+        let category = AssetCategory::Storage(storage_item.clone());
+        asset_inventory.assets.push(Asset {
+            visibility: "private".to_string(),
+            name: storage_item.clone(),
             category,
         });
     }
@@ -170,7 +183,7 @@ impl AssetInventory {
 
 /// Visitor to find functions in the Rust file.
 struct FunctionVisitor {
-    functions: HashMap<String, String>,             // Store function name and their visibility
+    functions: HashMap<String, String>, // Store function name and their visibility
     params: Vec<(String, Vec<(String, String)>)>, // (function name, parameter names and types)
 }
 
@@ -179,13 +192,14 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
     fn visit_item_impl(&mut self, node: &'ast syn::ItemImpl) {
         // Visit all items in the impl block
         for item in &node.items {
+            // Extract function information
             if let syn::ImplItem::Fn(method) = item {
                 let fn_name = method.sig.ident.to_string();
-                
+
                 // Determine function visibility
                 let visibility = match &method.vis {
                     syn::Visibility::Public(_) => "public",
-                    _ => "private"
+                    _ => "private",
                 };
 
                 // Extract parameter names and types
@@ -200,10 +214,42 @@ impl<'ast> Visit<'ast> for FunctionVisitor {
                     }
                 }
 
-                self.functions.insert(fn_name.clone(), visibility.to_string());
+                self.functions
+                    .insert(fn_name.clone(), visibility.to_string());
                 self.params.push((fn_name, param_info));
             }
         }
         syn::visit::visit_item_impl(self, node);
+    }
+}
+
+/// Visitor to find storage items in the Rust file.
+struct StorageVisitor {
+    storage_items: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for StorageVisitor {
+    fn visit_item_mod(&mut self, node: &'ast syn::ItemMod) {
+        // Check if this is the pallet module
+        if node.ident == "pallet" {
+            // Visit the module contents if available
+            if let Some((_, items)) = &node.content {
+                for item in items {
+                    // Look for storage items marked with #[pallet::storage]
+                    if let syn::Item::Type(storage_type) = item {
+                        // Check if the type has the #[pallet::storage] attribute
+                        if storage_type.attrs.iter().any(|attr| {
+                            // Check if the attribute path matches pallet::storage
+                            attr.path().leading_colon.is_some()
+                        }) {
+                            let storage_name = storage_type.ident.to_string();
+                            self.storage_items.push(storage_name);
+                        }
+                    }
+                }
+            }
+        }
+        // Continue visiting other modules
+        syn::visit::visit_item_mod(self, node);
     }
 }
