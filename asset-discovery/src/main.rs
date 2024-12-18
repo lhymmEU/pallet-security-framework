@@ -1,7 +1,7 @@
 use quote::quote;
 use serde::Serialize;
 use std::{collections::HashMap, fs, path::Path};
-use syn::{visit::Visit, Error, File, ItemFn, Meta, PathSegment};
+use syn::{visit::Visit, Attribute, Error, File, ItemFn, Meta, PathSegment};
 
 fn main() {
     // Read source code
@@ -69,10 +69,16 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         constants: Vec::new(),
     };
 
+    // Visit the file to extract events
+    let mut event_visitor = EventVisitor {
+        events: Vec::new(),
+    };
+
     // Visit all items in the file
     fn_visitor.visit_file(&syntax_tree);
     storage_visitor.visit_file(&syntax_tree);
     constant_visitor.visit_file(&syntax_tree);
+    event_visitor.visit_file(&syntax_tree);
 
     let mut asset_inventory = AssetInventory { assets: Vec::new() };
 
@@ -102,11 +108,22 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         });
     }
 
+    // Parse visitor type into Asset type
     for constant in constant_visitor.constants {
         let category = AssetCategory::Constant(constant.clone());
         asset_inventory.assets.push(Asset {
             visibility: "none".to_string(),
             name: constant.clone(),
+            category,
+        });
+    }
+
+    // Parse visitor type into Asset type
+    for event in event_visitor.events {
+        let category = AssetCategory::Events(event.clone());
+        asset_inventory.assets.push(Asset {
+            visibility: "public".to_string(),
+            name: event.clone(),
             category,
         });
     }
@@ -292,20 +309,52 @@ impl<'ast> Visit<'ast> for ConstantVisitor {
                 //  #[doc = "..."]
                 //  #[pallet::constant]
                 //  type StringLimit: Get<u32>;
-                let has_pallet_constant = constant.attrs.iter().any(|attr| {
-                    let path_str = attr.path().segments.iter()
-                        .map(|seg| seg.ident.to_string())
-                        .collect::<Vec<_>>()
-                        .join("::");
-                    
-                    path_str == "pallet::constant"
-                });
+                let res = constant
+                    .attrs
+                    .iter()
+                    .any(|attr| has_pallet_constant("pallet::constant".to_string(), attr));
 
-                if has_pallet_constant {
+                if res {
                     let constant_name = constant.ident.to_string();
                     self.constants.push(constant_name);
                 }
             }
         }
     }
+}
+
+// Visitor to find events in the Rust file.
+struct EventVisitor {
+    events: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for EventVisitor {
+    fn visit_item_enum(&mut self, node: &'ast syn::ItemEnum) {
+        // First check if this enum has the #[pallet::event] attribute
+        let res = node.attrs.iter().any(|attr| {
+            has_pallet_constant("pallet::event".to_string(), attr)
+        });
+
+        // If the enum has the #[pallet::event] attribute, then process all variants
+        if res {
+            for variant in &node.variants {
+                let event_name = variant.ident.to_string();
+                self.events.push(event_name);
+            }
+        }
+    }
+}
+
+// ----------------------------------------------Helper Functions--------------------------------------------------
+
+fn has_pallet_constant(name: String, attrs: &Attribute) -> bool {
+    let path_str = attrs
+        .path()
+        .segments
+        .iter()
+        .map(|seg| seg.ident.to_string())
+        .collect::<Vec<_>>()
+        .join("::");
+
+    path_str == name
 }

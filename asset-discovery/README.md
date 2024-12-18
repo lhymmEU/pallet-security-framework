@@ -20,5 +20,10 @@ Security-critical components of a pallet in descending order of severity:
 ## TODO
 - ✅ Extract storage items
 - ✅ Extract constants
-- Extract events
+- ✅ Extract events
 - Extract errors
+- Consolidate codes using the new procedural macro finding algorithm
+- Update asset-related data structures for threat modeling procedure to use
+- Make the code robust
+- Documentation: a short intro to the syn crate
+- Documentation of this asset discovery tool
