@@ -495,18 +495,8 @@
     },
     {
       "visibility": "public",
-      "name": "Followers",
-      "category": { "Storage": ["Followers", "public"] }
-    },
-    {
-      "visibility": "public",
       "name": "Followings",
       "category": { "Storage": ["Followings", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "UserItem",
-      "category": { "Storage": ["UserItem", "public"] }
     },
     {
       "visibility": "public",
@@ -520,13 +510,88 @@
     },
     {
       "visibility": "public",
+      "name": "Team",
+      "category": { "Storage": ["Team", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "Followers",
+      "category": { "Storage": ["Followers", "public"] }
+    },
+    {
+      "visibility": "public",
       "name": "UserAddress",
       "category": { "Storage": ["UserAddress", "public"] }
     },
     {
       "visibility": "public",
-      "name": "Team",
-      "category": { "Storage": ["Team", "public"] }
+      "name": "UserItem",
+      "category": { "Storage": ["UserItem", "public"] }
+    },
+    {
+      "visibility": "none",
+      "name": "RuntimeEvent",
+      "category": { "Constant": "RuntimeEvent" }
+    },
+    {
+      "visibility": "none",
+      "name": "TimeProvider",
+      "category": { "Constant": "TimeProvider" }
+    },
+    {
+      "visibility": "none",
+      "name": "SubAccounts",
+      "category": { "Constant": "SubAccounts" }
+    },
+    {
+      "visibility": "none",
+      "name": "AssetsFungibles",
+      "category": { "Constant": "AssetsFungibles" }
+    },
+    {
+      "visibility": "none",
+      "name": "Newsfeed",
+      "category": { "Constant": "Newsfeed" }
+    },
+    {
+      "visibility": "none",
+      "name": "StringLimit",
+      "category": { "Constant": "StringLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "WeightInfo",
+      "category": { "Constant": "WeightInfo" }
+    },
+    {
+      "visibility": "none",
+      "name": "AmountUNITbyInvitee",
+      "category": { "Constant": "AmountUNITbyInvitee" }
+    },
+    {
+      "visibility": "none",
+      "name": "PalletId",
+      "category": { "Constant": "PalletId" }
+    },
+    {
+      "visibility": "none",
+      "name": "UnitPerByte",
+      "category": { "Constant": "UnitPerByte" }
+    },
+    {
+      "visibility": "none",
+      "name": "BaseBytesPerMessage",
+      "category": { "Constant": "BaseBytesPerMessage" }
+    },
+    {
+      "visibility": "none",
+      "name": "BaseBytesPerConnection",
+      "category": { "Constant": "BaseBytesPerConnection" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxNumberOfConversations",
+      "category": { "Constant": "MaxNumberOfConversations" }
     }
   ]
 }

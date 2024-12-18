@@ -64,9 +64,15 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         storage_items: HashMap::new(),
     };
 
+    // Visit the file to extract constants
+    let mut constant_visitor = ConstantVisitor {
+        constants: Vec::new(),
+    };
+
     // Visit all items in the file
     fn_visitor.visit_file(&syntax_tree);
     storage_visitor.visit_file(&syntax_tree);
+    constant_visitor.visit_file(&syntax_tree);
 
     let mut asset_inventory = AssetInventory { assets: Vec::new() };
 
@@ -92,6 +98,15 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         asset_inventory.assets.push(Asset {
             visibility: visibility.to_string(),
             name: storage_item.clone(),
+            category,
+        });
+    }
+
+    for constant in constant_visitor.constants {
+        let category = AssetCategory::Constant(constant.clone());
+        asset_inventory.assets.push(Asset {
+            visibility: "none".to_string(),
+            name: constant.clone(),
             category,
         });
     }
@@ -128,11 +143,11 @@ enum AssetCategory {
     CustomType(String, String),
     /// Point of interest:
     /// 1. Constants that define security thresholds
+    /// 2. These constants are defined by runtime implementation, it also could cause security issues
     ///
     /// # Arguments
     /// * `String` - The name of the constant
-    /// * `String` - The purpose of the constant
-    Constant(String, String),
+    Constant(String),
     /// Point of interest:
     /// 1. Weight calculations and resource limits
     ///
@@ -260,3 +275,23 @@ impl<'ast> Visit<'ast> for StorageVisitor {
         syn::visit::visit_item_mod(self, node);
     }
 }
+
+/// Visitor to find constants in the Rust file.
+struct ConstantVisitor {
+    constants: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for ConstantVisitor {
+    fn visit_item_trait(&mut self, node: &'ast syn::ItemTrait) {
+        // Visit all items in the trait block
+        for item in &node.items {
+            // Extract constant information
+            // In a pallet, constants are types
+            if let syn::TraitItem::Type(constant) = item {
+                let constant_name = constant.ident.to_string();
+                self.constants.push(constant_name);
+            }
+        }
+    }
+}
+

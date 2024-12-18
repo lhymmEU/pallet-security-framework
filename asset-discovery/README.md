@@ -19,5 +19,6 @@ Security-critical components of a pallet in descending order of severity:
 
 ## TODO
 - ✅ Extract storage items
-- Extract custom types
 - Extract constants
+- Extract events
+- Extract errors
