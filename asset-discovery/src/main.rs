@@ -298,7 +298,6 @@ impl<'ast> Visit<'ast> for ConstantVisitor {
                         .collect::<Vec<_>>()
                         .join("::");
                     
-                    println!("Checking path: {}", path_str); // For debugging
                     path_str == "pallet::constant"
                 });
 
