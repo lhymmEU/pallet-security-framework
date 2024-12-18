@@ -254,16 +254,16 @@ impl<'ast> Visit<'ast> for StorageVisitor {
                     if let syn::Item::Type(storage_type) = item {
                         // Check if the type has the #[pallet::storage] attribute
                         //println!("Attributes for {} is {:#?}", storage_type.ident.to_string(), storage_type.attrs);
-                        if storage_type.attrs.iter().any(|_attr| {
-                            true
-                        }) {
+                        if storage_type.attrs.iter().any(|_attr| true) {
                             let storage_name = storage_type.ident.to_string();
                             match storage_type.vis {
                                 syn::Visibility::Public(_) => {
-                                    self.storage_items.insert(storage_name, "public".to_string());
+                                    self.storage_items
+                                        .insert(storage_name, "public".to_string());
                                 }
                                 _ => {
-                                    self.storage_items.insert(storage_name, "private".to_string());
+                                    self.storage_items
+                                        .insert(storage_name, "private".to_string());
                                 }
                             }
                         }
@@ -283,15 +283,30 @@ struct ConstantVisitor {
 
 impl<'ast> Visit<'ast> for ConstantVisitor {
     fn visit_item_trait(&mut self, node: &'ast syn::ItemTrait) {
-        // Visit all items in the trait block
+        // Then process the current trait's items
         for item in &node.items {
-            // Extract constant information
-            // In a pallet, constants are types
             if let syn::TraitItem::Type(constant) = item {
-                let constant_name = constant.ident.to_string();
-                self.constants.push(constant_name);
+                // Check if any attribute matches #[pallet::constant]
+                // One interesting thing to notice is that, doc comments are considered as attributes in the form of #[doc = "..."]
+                // Which means, in the eyes of syn crate a constant with comments looks like this:
+                //  #[doc = "..."]
+                //  #[pallet::constant]
+                //  type StringLimit: Get<u32>;
+                let has_pallet_constant = constant.attrs.iter().any(|attr| {
+                    let path_str = attr.path().segments.iter()
+                        .map(|seg| seg.ident.to_string())
+                        .collect::<Vec<_>>()
+                        .join("::");
+                    
+                    println!("Checking path: {}", path_str); // For debugging
+                    path_str == "pallet::constant"
+                });
+
+                if has_pallet_constant {
+                    let constant_name = constant.ident.to_string();
+                    self.constants.push(constant_name);
+                }
             }
         }
     }
 }
-
