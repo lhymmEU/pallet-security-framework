@@ -21,7 +21,7 @@ Security-critical components of a pallet in descending order of severity:
 - ✅ Extract storage items
 - ✅ Extract constants
 - ✅ Extract events
-- Extract errors
+- ✅ Extract errors
 - Consolidate codes using the new procedural macro finding algorithm
 - Update asset-related data structures for threat modeling procedure to use
 - Make the code robust

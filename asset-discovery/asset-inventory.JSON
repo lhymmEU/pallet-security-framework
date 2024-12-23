@@ -1,1 +1,591 @@
-{"assets":[{"visibility":"private","name":"default","category":{"Helper":["default",[]]}},{"visibility":"private","name":"build","category":{"Helper":["build",[]]}},{"visibility":"private","name":"create_user","category":{"Helper":["create_user",[["origin","origin : OriginFor < T >"],["username","username : BoundedVec < u8 , T :: StringLimit >"],["inviter","mut inviter : T :: AccountId"],["account_origin","account_origin : AccountOrigin"]]]}},{"visibility":"public","name":"create_user_backup","category":{"PublicFunction":["create_user_backup",[["origin","origin : OriginFor < T >"],["backup_account","backup_account : T :: AccountId"],["username","username : BoundedVec < u8 , T :: StringLimit >"],["inviter","mut inviter : T :: AccountId"],["chat_public_key","chat_public_key : BoundedVec < u8 , T :: StringLimit >"]]]}},{"visibility":"public","name":"update_user","category":{"PublicFunction":["update_user",[["origin","origin : OriginFor < T >"],["first_name","first_name : Option < BoundedVec < u8 , T :: StringLimit > >"],["last_name","last_name : Option < BoundedVec < u8 , T :: StringLimit > >"],["bio","bio : Option < BoundedVec < u8 , T :: StringLimit > >"],["username","username : Option < BoundedVec < u8 , T :: StringLimit > >"],["website","website : Option < BoundedVec < u8 , T :: StringLimit > >"],["linkedin","linkedin : Option < BoundedVec < u8 , T :: StringLimit > >"],["twitter","twitter : Option < BoundedVec < u8 , T :: StringLimit > >"],["instagram","instagram : Option < BoundedVec < u8 , T :: StringLimit > >"],["telegram","telegram : Option < BoundedVec < u8 , T :: StringLimit > >"],["youtube_url","youtube_url : Option < BoundedVec < u8 , T :: StringLimit > >"],["facebook","facebook : Option < BoundedVec < u8 , T :: StringLimit > >"],["vision","vision : Option < BoundedVec < u8 , T :: StringLimit > >"],["tag_line","tag_line : Option < BoundedVec < u8 , T :: StringLimit > >"],["location","location : Option < BoundedVec < u8 , T :: StringLimit > >"],["city_token_symbol","city_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"],["industry_token_symbol","industry_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"],["personal_token_symbol","personal_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"],["project_token_symbol","project_token_symbol : Option < BoundedVec < u8 , T :: StringLimit > >"],["profile_picture_colour_hex","profile_picture_colour_hex : Option < BoundedVec < u8 , T :: StringLimit > >"],["profile_picture_initials","profile_picture_initials : Option < BoundedVec < u8 , T :: StringLimit > >"],["hourly_rate","hourly_rate : Option < u32 >"],["avatar","avatar : Option < u32 >"]]]}},{"visibility":"public","name":"follow_user","category":{"PublicFunction":["follow_user",[["origin","origin : OriginFor < T >"],["user","user : T :: AccountId"]]]}},{"visibility":"public","name":"unfollow_user","category":{"PublicFunction":["unfollow_user",[["origin","origin : OriginFor < T >"],["user","user : T :: AccountId"]]]}},{"visibility":"public","name":"send_message","category":{"PublicFunction":["send_message",[["origin","origin : OriginFor < T >"],["receiver","receiver : T :: AccountId"],["encrypted_message","encrypted_message : BoundedVec < u8 , T :: StringLimit >"]]]}},{"visibility":"public","name":"increase_number_remaining_invitee","category":{"PublicFunction":["increase_number_remaining_invitee",[["origin","origin : OriginFor < T >"],["nb_invitee_more","nb_invitee_more : u64"]]]}},{"visibility":"public","name":"account_id","category":{"PublicFunction":["account_id",[]]}},{"visibility":"public","name":"user_item","category":{"PublicFunction":["user_item",[["account_id","account_id : & T :: AccountId"]]]}},{"visibility":"public","name":"get_user_address","category":{"PublicFunction":["get_user_address",[["hash","hash : & T :: Hash"]]]}},{"visibility":"public","name":"get_followers","category":{"PublicFunction":["get_followers",[["account_id","account_id : & T :: AccountId"],["follower_id","follower_id : & T :: AccountId"]]]}},{"visibility":"public","name":"get_followings","category":{"PublicFunction":["get_followings",[["account_id","account_id : & T :: AccountId"],["following_id","following_id : & T :: AccountId"]]]}},{"visibility":"public","name":"all_messages","category":{"PublicFunction":["all_messages",[["sender","sender : T :: AccountId"],["receiver","receiver : T :: AccountId"]]]}},{"visibility":"public","name":"team","category":{"PublicFunction":["team",[["account_id","account_id : T :: AccountId"]]]}},{"visibility":"public","name":"calculate_transfer_amount","category":{"PublicFunction":["calculate_transfer_amount",[["nb_invitee_more","nb_invitee_more : u64"]]]}},{"visibility":"private","name":"compute_metadata_deposit_fee","category":{"Helper":["compute_metadata_deposit_fee",[["first_name","first_name : BoundedVec < u8 , T :: StringLimit >"],["last_name","last_name : BoundedVec < u8 , T :: StringLimit >"],["bio","bio : BoundedVec < u8 , T :: StringLimit >"],["username","username : BoundedVec < u8 , T :: StringLimit >"],["location","location : BoundedVec < u8 , T :: StringLimit >"],["website","website : BoundedVec < u8 , T :: StringLimit >"],["linkedin","linkedin : BoundedVec < u8 , T :: StringLimit >"],["twitter","twitter : BoundedVec < u8 , T :: StringLimit >"],["instagram","instagram : BoundedVec < u8 , T :: StringLimit >"],["telegram","telegram : BoundedVec < u8 , T :: StringLimit >"],["youtube_url","youtube_url : BoundedVec < u8 , T :: StringLimit >"],["facebook","facebook : BoundedVec < u8 , T :: StringLimit >"],["vision","vision : BoundedVec < u8 , T :: StringLimit >"],["tag_line","tag_line : BoundedVec < u8 , T :: StringLimit >"],["city_token_symbol","city_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["industry_token_symbol","industry_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["personal_token_symbol","personal_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["project_token_symbol","project_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["profile_picture_colour_hex","profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit >"],["profile_picture_initials","profile_picture_initials : BoundedVec < u8 , T :: StringLimit >"]]]}},{"visibility":"private","name":"compute_message_deposit_fee","category":{"Helper":["compute_message_deposit_fee",[["encrypted_message","encrypted_message : BoundedVec < u8 , T :: StringLimit >"]]]}},{"visibility":"private","name":"update_field","category":{"Helper":["update_field",[["original","original : & mut U"],["new_value","new_value : Option < U >"]]]}},{"visibility":"private","name":"get_inviter","category":{"Helper":["get_inviter",[["who","who : T :: AccountId"]]]}},{"visibility":"private","name":"has_profile","category":{"Helper":["has_profile",[["who","who : T :: AccountId"]]]}},{"visibility":"private","name":"get_profile_address","category":{"Helper":["get_profile_address",[["who","who : T :: AccountId"]]]}},{"visibility":"private","name":"add_sub_account","category":{"Helper":["add_sub_account",[["main","main : T :: AccountId"],["sub_account","sub_account : T :: AccountId"]]]}},{"visibility":"private","name":"remove_sub_account","category":{"Helper":["remove_sub_account",[["main","main : T :: AccountId"],["sub_account","sub_account : T :: AccountId"]]]}},{"visibility":"private","name":"get_sub_accounts","category":{"Helper":["get_sub_accounts",[["main","main : T :: AccountId"]]]}},{"visibility":"private","name":"get_new_followers","category":{"Helper":["get_new_followers",[["who","who : T :: AccountId"],["since","since : u64"]]]}},{"visibility":"private","name":"get_new_messages","category":{"Helper":["get_new_messages",[["who","who : T :: AccountId"],["since","since : u64"]]]}},{"visibility":"private","name":"create_user","category":{"Helper":["create_user",[["who","who : T :: AccountId"],["first_name","first_name : BoundedVec < u8 , T :: StringLimit >"],["last_name","last_name : BoundedVec < u8 , T :: StringLimit >"],["bio","bio : BoundedVec < u8 , T :: StringLimit >"],["username","username : BoundedVec < u8 , T :: StringLimit >"],["website","website : BoundedVec < u8 , T :: StringLimit >"],["linkedin","linkedin : BoundedVec < u8 , T :: StringLimit >"],["twitter","twitter : BoundedVec < u8 , T :: StringLimit >"],["instagram","instagram : BoundedVec < u8 , T :: StringLimit >"],["telegram","telegram : BoundedVec < u8 , T :: StringLimit >"],["youtube_url","youtube_url : BoundedVec < u8 , T :: StringLimit >"],["facebook","facebook : BoundedVec < u8 , T :: StringLimit >"],["vision","vision : BoundedVec < u8 , T :: StringLimit >"],["tag_line","tag_line : BoundedVec < u8 , T :: StringLimit >"],["inviter","inviter : T :: AccountId"],["city_token_symbol","city_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["industry_token_symbol","industry_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["personal_token_symbol","personal_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["project_token_symbol","project_token_symbol : BoundedVec < u8 , T :: StringLimit >"],["profile_picture_colour_hex","profile_picture_colour_hex : BoundedVec < u8 , T :: StringLimit >"],["profile_picture_initials","profile_picture_initials : BoundedVec < u8 , T :: StringLimit >"],["avatar","avatar : u32"]]]}},{"visibility":"private","name":"create_user_account","category":{"Helper":["create_user_account",[["who","who : T :: AccountId"]]]}},{"visibility":"public","name":"Team","category":{"Storage":["Team","public"]}},{"visibility":"public","name":"Followers","category":{"Storage":["Followers","public"]}},{"visibility":"public","name":"UserConversations","category":{"Storage":["UserConversations","public"]}},{"visibility":"public","name":"UserAddress","category":{"Storage":["UserAddress","public"]}},{"visibility":"public","name":"AllMessage","category":{"Storage":["AllMessage","public"]}},{"visibility":"public","name":"UserItem","category":{"Storage":["UserItem","public"]}},{"visibility":"public","name":"Followings","category":{"Storage":["Followings","public"]}},{"visibility":"none","name":"StringLimit","category":{"Constant":"StringLimit"}},{"visibility":"none","name":"AmountUNITbyInvitee","category":{"Constant":"AmountUNITbyInvitee"}},{"visibility":"none","name":"PalletId","category":{"Constant":"PalletId"}},{"visibility":"none","name":"UnitPerByte","category":{"Constant":"UnitPerByte"}},{"visibility":"none","name":"BaseBytesPerMessage","category":{"Constant":"BaseBytesPerMessage"}},{"visibility":"none","name":"BaseBytesPerConnection","category":{"Constant":"BaseBytesPerConnection"}},{"visibility":"none","name":"MaxNumberOfConversations","category":{"Constant":"MaxNumberOfConversations"}},{"visibility":"public","name":"ProfileCreated","category":{"Events":"ProfileCreated"}},{"visibility":"public","name":"ProfileUpdated","category":{"Events":"ProfileUpdated"}},{"visibility":"public","name":"ProfileFollowed","category":{"Events":"ProfileFollowed"}},{"visibility":"public","name":"ProfileUnfollowed","category":{"Events":"ProfileUnfollowed"}},{"visibility":"public","name":"ProfileSentMessage","category":{"Events":"ProfileSentMessage"}},{"visibility":"public","name":"ProfileIncreasedInvitees","category":{"Events":"ProfileIncreasedInvitees"}}]}
+{
+  "assets": [
+    {
+      "visibility": "private",
+      "name": "on_initialize",
+      "category": {
+        "Helper": ["on_initialize", [["now", "now : BlockNumberFor < T >"]]]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "asset_bond_and_stake",
+      "category": {
+        "PublicFunction": [
+          "asset_bond_and_stake",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "asset_unbond_and_unstake",
+      "category": {
+        "PublicFunction": [
+          "asset_unbond_and_unstake",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "withdraw_unbonded_asset",
+      "category": {
+        "PublicFunction": [
+          "withdraw_unbonded_asset",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "claim_asset_rewards",
+      "category": {
+        "PublicFunction": [
+          "claim_asset_rewards",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "register_asset",
+      "category": {
+        "PublicFunction": [
+          "register_asset",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            [
+              "reward_amount",
+              "# [pallet :: compact] reward_amount : AssetBalanceOf < T >"
+            ],
+            ["unbonding_period", "unbonding_period : EraIndex"],
+            ["asset_apr", "asset_apr : u8"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "unregister_asset",
+      "category": {
+        "PublicFunction": [
+          "unregister_asset",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "cancel_unbond",
+      "category": {
+        "PublicFunction": [
+          "cancel_unbond",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["chunk_index", "chunk_index : u32"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "donate_to_reward_pool",
+      "category": {
+        "PublicFunction": [
+          "donate_to_reward_pool",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "user_actions",
+      "category": {
+        "Helper": [
+          "user_actions",
+          [
+            ["asset_id", "asset_id : & AssetIdOf < T >"],
+            ["who", "who : & T :: AccountId"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_apr",
+      "category": {
+        "Helper": ["asset_apr", [["asset_id", "asset_id : AssetIdOf < T >"]]]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "force_era",
+      "category": { "Helper": ["force_era", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "next_era_starting_block",
+      "category": { "Helper": ["next_era_starting_block", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_staker_info",
+      "category": {
+        "Helper": [
+          "asset_staker_info",
+          [
+            ["asset_id", "asset_id : & AssetIdOf < T >"],
+            ["staker", "staker : & T :: AccountId"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_general_era_info",
+      "category": {
+        "Helper": [
+          "asset_general_era_info",
+          [
+            ["asset_id", "asset_id : & AssetIdOf < T >"],
+            ["era", "era : & EraIndex"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "current_era",
+      "category": { "Helper": ["current_era", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_ledger",
+      "category": {
+        "Helper": [
+          "asset_ledger",
+          [
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["staker", "staker : & T :: AccountId"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "registered_assets",
+      "category": {
+        "Helper": [
+          "registered_assets",
+          [["asset_id", "asset_id : AssetIdOf < T >"]]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "account_id",
+      "category": { "Helper": ["account_id", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "reward_pool",
+      "category": { "Helper": ["reward_pool", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_stake",
+      "category": {
+        "Helper": [
+          "asset_stake",
+          [
+            [
+              "staker_info",
+              "staker_info : & mut StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
+            ],
+            ["value", "value : AssetBalanceOf < T >"],
+            ["current_era", "current_era : EraIndex"],
+            ["now", "now : MomentOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "asset_unstake",
+      "category": {
+        "Helper": [
+          "asset_unstake",
+          [
+            [
+              "staker_info",
+              "staker_info : & mut StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
+            ],
+            ["value", "value : AssetBalanceOf < T >"],
+            ["current_era", "current_era : EraIndex"],
+            ["now", "now : MomentOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "update_asset_ledger",
+      "category": {
+        "Helper": [
+          "update_asset_ledger",
+          [
+            ["staker", "staker : & T :: AccountId"],
+            ["ledger", "ledger : AccountLedger < AssetBalanceOf < T > >"],
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["amount_staked", "amount_staked : AssetBalanceOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "update_asset_staker_info",
+      "category": {
+        "Helper": [
+          "update_asset_staker_info",
+          [
+            ["staker", "staker : & T :: AccountId"],
+            [
+              "staker_info",
+              "staker_info : StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
+            ],
+            ["asset_id", "asset_id : AssetIdOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "compute_asset_reward",
+      "category": {
+        "Helper": [
+          "compute_asset_reward",
+          [
+            ["asset_id", "asset_id : AssetIdOf < T >"],
+            ["staked_value", "staked_value : AssetBalanceOf < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "should_restake_asset_reward",
+      "category": {
+        "Helper": [
+          "should_restake_asset_reward",
+          [
+            ["reward_destination", "reward_destination : RewardDestination"],
+            [
+              "latest_staked_value",
+              "latest_staked_value : AssetBalanceOf < T >"
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "private",
+      "name": "rotate_staking_info",
+      "category": {
+        "Helper": [
+          "rotate_staking_info",
+          [["current_era", "current_era : EraIndex"]]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "RegisteredAssets",
+      "category": { "Storage": ["RegisteredAssets", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetLedger",
+      "category": { "Storage": ["AssetLedger", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "UserRewards",
+      "category": { "Storage": ["UserRewards", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "UserActions",
+      "category": { "Storage": ["UserActions", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "CurrentEra",
+      "category": { "Storage": ["CurrentEra", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetUnbondingPeriod",
+      "category": { "Storage": ["AssetUnbondingPeriod", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetAPR",
+      "category": { "Storage": ["AssetAPR", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetGeneralEraInfo",
+      "category": { "Storage": ["AssetGeneralEraInfo", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetGeneralStakerInfo",
+      "category": { "Storage": ["AssetGeneralStakerInfo", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "NextEraStartingBlock",
+      "category": { "Storage": ["NextEraStartingBlock", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ForceEra",
+      "category": { "Storage": ["ForceEra", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetBalanceOf",
+      "category": { "Storage": ["AssetBalanceOf", "public"] }
+    },
+    {
+      "visibility": "none",
+      "name": "PalletId",
+      "category": { "Constant": "PalletId" }
+    },
+    {
+      "visibility": "none",
+      "name": "RewardsPoolId",
+      "category": { "Constant": "RewardsPoolId" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxEraStakeValues",
+      "category": { "Constant": "MaxEraStakeValues" }
+    },
+    {
+      "visibility": "none",
+      "name": "MinimumStakingAmount",
+      "category": { "Constant": "MinimumStakingAmount" }
+    },
+    {
+      "visibility": "none",
+      "name": "BlockPerEra",
+      "category": { "Constant": "BlockPerEra" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxUnlockingChunks",
+      "category": { "Constant": "MaxUnlockingChunks" }
+    },
+    {
+      "visibility": "none",
+      "name": "AssetRegistrationFee",
+      "category": { "Constant": "AssetRegistrationFee" }
+    },
+    {
+      "visibility": "none",
+      "name": "UnitId",
+      "category": { "Constant": "UnitId" }
+    },
+    {
+      "visibility": "none",
+      "name": "StringLimit",
+      "category": { "Constant": "StringLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "DepositPerReward",
+      "category": { "Constant": "DepositPerReward" }
+    },
+    {
+      "visibility": "none",
+      "name": "DepositPerAction",
+      "category": { "Constant": "DepositPerAction" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxClaimIterations",
+      "category": { "Constant": "MaxClaimIterations" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetBondAndStake",
+      "category": { "Events": "AssetBondAndStake" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetUnbondAndUnstake",
+      "category": { "Events": "AssetUnbondAndUnstake" }
+    },
+    {
+      "visibility": "public",
+      "name": "NewEra",
+      "category": { "Events": "NewEra" }
+    },
+    {
+      "visibility": "public",
+      "name": "WithdrawnFromAsset",
+      "category": { "Events": "WithdrawnFromAsset" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetReward",
+      "category": { "Events": "AssetReward" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetRegistered",
+      "category": { "Events": "AssetRegistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetUnregistered",
+      "category": { "Events": "AssetUnregistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "StakingSttoped",
+      "category": { "Events": "StakingSttoped" }
+    },
+    {
+      "visibility": "public",
+      "name": "CancelUnbond",
+      "category": { "Events": "CancelUnbond" }
+    },
+    {
+      "visibility": "public",
+      "name": "TokensDonated",
+      "category": { "Events": "TokensDonated" }
+    },
+    {
+      "visibility": "public",
+      "name": "RewardsCleaned",
+      "category": { "Events": "RewardsCleaned" }
+    },
+    {
+      "visibility": "public",
+      "name": "InsufficientValue",
+      "category": { "Error": "InsufficientValue" }
+    },
+    {
+      "visibility": "public",
+      "name": "StakingWithNoValue",
+      "category": { "Error": "StakingWithNoValue" }
+    },
+    {
+      "visibility": "public",
+      "name": "TooManyEraStakeValues",
+      "category": { "Error": "TooManyEraStakeValues" }
+    },
+    {
+      "visibility": "public",
+      "name": "UnexpectedStakeInfoEra",
+      "category": { "Error": "UnexpectedStakeInfoEra" }
+    },
+    {
+      "visibility": "public",
+      "name": "UnstakingWithNoValue",
+      "category": { "Error": "UnstakingWithNoValue" }
+    },
+    {
+      "visibility": "public",
+      "name": "TooManyUnlockingChunks",
+      "category": { "Error": "TooManyUnlockingChunks" }
+    },
+    {
+      "visibility": "public",
+      "name": "NothingToWithdraw",
+      "category": { "Error": "NothingToWithdraw" }
+    },
+    {
+      "visibility": "public",
+      "name": "EraOutOfBounds",
+      "category": { "Error": "EraOutOfBounds" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidAPR",
+      "category": { "Error": "InvalidAPR" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetAlreadyRegistered",
+      "category": { "Error": "AssetAlreadyRegistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "NotAuthorized",
+      "category": { "Error": "NotAuthorized" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidRewardAmount",
+      "category": { "Error": "InvalidRewardAmount" }
+    },
+    {
+      "visibility": "public",
+      "name": "AssetNotRegistered",
+      "category": { "Error": "AssetNotRegistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "StakingActive",
+      "category": { "Error": "StakingActive" }
+    },
+    {
+      "visibility": "public",
+      "name": "StakingNotActive",
+      "category": { "Error": "StakingNotActive" }
+    },
+    {
+      "visibility": "public",
+      "name": "NoUnbondingInfo",
+      "category": { "Error": "NoUnbondingInfo" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidIndex",
+      "category": { "Error": "InvalidIndex" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidAsset",
+      "category": { "Error": "InvalidAsset" }
+    }
+  ]
+}

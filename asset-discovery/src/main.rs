@@ -1,7 +1,7 @@
 use quote::quote;
 use serde::Serialize;
 use std::{collections::HashMap, fs, path::Path};
-use syn::{visit::Visit, Attribute, Error, File, ItemFn, Meta, PathSegment};
+use syn::{visit::Visit, Attribute, Error, File};
 
 fn main() {
     // Read source code
@@ -74,11 +74,17 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         events: Vec::new(),
     };
 
+    // Visit the file to extract errors 
+    let mut error_visitor = ErrorVisitor {
+        errors: Vec::new(),
+    };
+
     // Visit all items in the file
     fn_visitor.visit_file(&syntax_tree);
     storage_visitor.visit_file(&syntax_tree);
     constant_visitor.visit_file(&syntax_tree);
     event_visitor.visit_file(&syntax_tree);
+    error_visitor.visit_file(&syntax_tree);
 
     let mut asset_inventory = AssetInventory { assets: Vec::new() };
 
@@ -124,6 +130,16 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
         asset_inventory.assets.push(Asset {
             visibility: "public".to_string(),
             name: event.clone(),
+            category,
+        });
+    }
+
+    // Parse visitor type into Asset type
+    for error in error_visitor.errors {
+        let category = AssetCategory::Error(error.clone());
+        asset_inventory.assets.push(Asset {
+            visibility: "public".to_string(),
+            name: error.clone(),
             category,
         });
     }
@@ -340,6 +356,28 @@ impl<'ast> Visit<'ast> for EventVisitor {
             for variant in &node.variants {
                 let event_name = variant.ident.to_string();
                 self.events.push(event_name);
+            }
+        }
+    }
+}
+
+// Visitor to find errors in the Rust file.
+struct ErrorVisitor {
+    errors: Vec<String>,
+}
+
+impl<'ast> Visit<'ast> for ErrorVisitor {
+    fn visit_item_enum(&mut self, node: &'ast syn::ItemEnum) {
+        // First check if this enum has the #[pallet::error] attribute
+        let res = node.attrs.iter().any(|attr| {
+            has_pallet_constant("pallet::error".to_string(), attr)
+        });
+
+        // If the enum has the #[pallet::error] attribute, then process all variants
+        if res {
+            for variant in &node.variants {
+                let error_name = variant.ident.to_string();
+                self.errors.push(error_name);
             }
         }
     }
