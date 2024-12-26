@@ -2,590 +2,116 @@
   "assets": [
     {
       "visibility": "private",
-      "name": "on_initialize",
-      "category": {
-        "Helper": ["on_initialize", [["now", "now : BlockNumberFor < T >"]]]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "asset_bond_and_stake",
-      "category": {
-        "PublicFunction": [
-          "asset_bond_and_stake",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "asset_unbond_and_unstake",
-      "category": {
-        "PublicFunction": [
-          "asset_unbond_and_unstake",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "withdraw_unbonded_asset",
-      "category": {
-        "PublicFunction": [
-          "withdraw_unbonded_asset",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "claim_asset_rewards",
-      "category": {
-        "PublicFunction": [
-          "claim_asset_rewards",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "register_asset",
-      "category": {
-        "PublicFunction": [
-          "register_asset",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            [
-              "reward_amount",
-              "# [pallet :: compact] reward_amount : AssetBalanceOf < T >"
-            ],
-            ["unbonding_period", "unbonding_period : EraIndex"],
-            ["asset_apr", "asset_apr : u8"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "unregister_asset",
-      "category": {
-        "PublicFunction": [
-          "unregister_asset",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "cancel_unbond",
-      "category": {
-        "PublicFunction": [
-          "cancel_unbond",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["chunk_index", "chunk_index : u32"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "donate_to_reward_pool",
-      "category": {
-        "PublicFunction": [
-          "donate_to_reward_pool",
-          [
-            ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["amount", "# [pallet :: compact] amount : AssetBalanceOf < T >"]
-          ]
-        ]
-      }
+      "name": "is_empty",
+      "category": { "Helper": ["is_empty", []] }
     },
     {
       "visibility": "private",
-      "name": "user_actions",
+      "name": "new",
       "category": {
         "Helper": [
-          "user_actions",
+          "new",
           [
-            ["asset_id", "asset_id : & AssetIdOf < T >"],
-            ["who", "who : & T :: AccountId"]
+            ["staked", "staked : Balance"],
+            ["era", "era : EraIndex"],
+            ["timestamp", "timestamp : Moment"]
           ]
         ]
       }
     },
     {
       "visibility": "private",
-      "name": "asset_apr",
-      "category": {
-        "Helper": ["asset_apr", [["asset_id", "asset_id : AssetIdOf < T >"]]]
-      }
+      "name": "is_empty",
+      "category": { "Helper": ["is_empty", []] }
     },
     {
       "visibility": "private",
-      "name": "force_era",
-      "category": { "Helper": ["force_era", []] }
+      "name": "len",
+      "category": { "Helper": ["len", []] }
     },
     {
       "visibility": "private",
-      "name": "next_era_starting_block",
-      "category": { "Helper": ["next_era_starting_block", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "asset_staker_info",
+      "name": "stake",
       "category": {
         "Helper": [
-          "asset_staker_info",
+          "stake",
           [
-            ["asset_id", "asset_id : & AssetIdOf < T >"],
-            ["staker", "staker : & T :: AccountId"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "asset_general_era_info",
-      "category": {
-        "Helper": [
-          "asset_general_era_info",
-          [
-            ["asset_id", "asset_id : & AssetIdOf < T >"],
-            ["era", "era : & EraIndex"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "current_era",
-      "category": { "Helper": ["current_era", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "asset_ledger",
-      "category": {
-        "Helper": [
-          "asset_ledger",
-          [
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["staker", "staker : & T :: AccountId"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "registered_assets",
-      "category": {
-        "Helper": [
-          "registered_assets",
-          [["asset_id", "asset_id : AssetIdOf < T >"]]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "account_id",
-      "category": { "Helper": ["account_id", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "reward_pool",
-      "category": { "Helper": ["reward_pool", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "asset_stake",
-      "category": {
-        "Helper": [
-          "asset_stake",
-          [
-            [
-              "staker_info",
-              "staker_info : & mut StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
-            ],
-            ["value", "value : AssetBalanceOf < T >"],
             ["current_era", "current_era : EraIndex"],
-            ["now", "now : MomentOf < T >"]
+            ["value", "value : Balance"],
+            ["now", "now : Moment"]
           ]
         ]
       }
     },
     {
       "visibility": "private",
-      "name": "asset_unstake",
+      "name": "unstake",
       "category": {
         "Helper": [
-          "asset_unstake",
+          "unstake",
           [
-            [
-              "staker_info",
-              "staker_info : & mut StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
-            ],
-            ["value", "value : AssetBalanceOf < T >"],
             ["current_era", "current_era : EraIndex"],
-            ["now", "now : MomentOf < T >"]
+            ["value", "value : Balance"],
+            ["now", "now : Moment"]
           ]
         ]
       }
     },
     {
       "visibility": "private",
-      "name": "update_asset_ledger",
+      "name": "claim",
       "category": {
         "Helper": [
-          "update_asset_ledger",
+          "claim",
           [
-            ["staker", "staker : & T :: AccountId"],
-            ["ledger", "ledger : AccountLedger < AssetBalanceOf < T > >"],
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["amount_staked", "amount_staked : AssetBalanceOf < T >"]
+            ["current_era", "current_era : EraIndex"],
+            ["now", "now : Moment"],
+            ["max_iterations", "max_iterations : u32"]
           ]
         ]
       }
     },
     {
+      "visibility": "public",
+      "name": "latest_staked_value",
+      "category": { "PublicFunction": ["latest_staked_value", []] }
+    },
+    {
       "visibility": "private",
-      "name": "update_asset_staker_info",
+      "name": "add_amount",
+      "category": { "Helper": ["add_amount", [["amount", "amount : Balance"]]] }
+    },
+    {
+      "visibility": "private",
+      "name": "len",
+      "category": { "Helper": ["len", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "is_empty",
+      "category": { "Helper": ["is_empty", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "sum",
+      "category": { "Helper": ["sum", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "add",
       "category": {
-        "Helper": [
-          "update_asset_staker_info",
-          [
-            ["staker", "staker : & T :: AccountId"],
-            [
-              "staker_info",
-              "staker_info : StakerInfo < AssetBalanceOf < T > , MomentOf < T > >"
-            ],
-            ["asset_id", "asset_id : AssetIdOf < T >"]
-          ]
-        ]
+        "Helper": ["add", [["chunk", "chunk : UnlockingChunk < Balance >"]]]
       }
     },
     {
       "visibility": "private",
-      "name": "compute_asset_reward",
-      "category": {
-        "Helper": [
-          "compute_asset_reward",
-          [
-            ["asset_id", "asset_id : AssetIdOf < T >"],
-            ["staked_value", "staked_value : AssetBalanceOf < T >"]
-          ]
-        ]
-      }
+      "name": "partition",
+      "category": { "Helper": ["partition", [["era", "era : EraIndex"]]] }
     },
     {
       "visibility": "private",
-      "name": "should_restake_asset_reward",
-      "category": {
-        "Helper": [
-          "should_restake_asset_reward",
-          [
-            ["reward_destination", "reward_destination : RewardDestination"],
-            [
-              "latest_staked_value",
-              "latest_staked_value : AssetBalanceOf < T >"
-            ]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "rotate_staking_info",
-      "category": {
-        "Helper": [
-          "rotate_staking_info",
-          [["current_era", "current_era : EraIndex"]]
-        ]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "RegisteredAssets",
-      "category": { "Storage": ["RegisteredAssets", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetLedger",
-      "category": { "Storage": ["AssetLedger", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "UserRewards",
-      "category": { "Storage": ["UserRewards", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "UserActions",
-      "category": { "Storage": ["UserActions", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "CurrentEra",
-      "category": { "Storage": ["CurrentEra", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetUnbondingPeriod",
-      "category": { "Storage": ["AssetUnbondingPeriod", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetAPR",
-      "category": { "Storage": ["AssetAPR", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetGeneralEraInfo",
-      "category": { "Storage": ["AssetGeneralEraInfo", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetGeneralStakerInfo",
-      "category": { "Storage": ["AssetGeneralStakerInfo", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "NextEraStartingBlock",
-      "category": { "Storage": ["NextEraStartingBlock", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "ForceEra",
-      "category": { "Storage": ["ForceEra", "public"] }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetBalanceOf",
-      "category": { "Storage": ["AssetBalanceOf", "public"] }
-    },
-    {
-      "visibility": "none",
-      "name": "PalletId",
-      "category": { "Constant": "PalletId" }
-    },
-    {
-      "visibility": "none",
-      "name": "RewardsPoolId",
-      "category": { "Constant": "RewardsPoolId" }
-    },
-    {
-      "visibility": "none",
-      "name": "MaxEraStakeValues",
-      "category": { "Constant": "MaxEraStakeValues" }
-    },
-    {
-      "visibility": "none",
-      "name": "MinimumStakingAmount",
-      "category": { "Constant": "MinimumStakingAmount" }
-    },
-    {
-      "visibility": "none",
-      "name": "BlockPerEra",
-      "category": { "Constant": "BlockPerEra" }
-    },
-    {
-      "visibility": "none",
-      "name": "MaxUnlockingChunks",
-      "category": { "Constant": "MaxUnlockingChunks" }
-    },
-    {
-      "visibility": "none",
-      "name": "AssetRegistrationFee",
-      "category": { "Constant": "AssetRegistrationFee" }
-    },
-    {
-      "visibility": "none",
-      "name": "UnitId",
-      "category": { "Constant": "UnitId" }
-    },
-    {
-      "visibility": "none",
-      "name": "StringLimit",
-      "category": { "Constant": "StringLimit" }
-    },
-    {
-      "visibility": "none",
-      "name": "DepositPerReward",
-      "category": { "Constant": "DepositPerReward" }
-    },
-    {
-      "visibility": "none",
-      "name": "DepositPerAction",
-      "category": { "Constant": "DepositPerAction" }
-    },
-    {
-      "visibility": "none",
-      "name": "MaxClaimIterations",
-      "category": { "Constant": "MaxClaimIterations" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetBondAndStake",
-      "category": { "Events": "AssetBondAndStake" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetUnbondAndUnstake",
-      "category": { "Events": "AssetUnbondAndUnstake" }
-    },
-    {
-      "visibility": "public",
-      "name": "NewEra",
-      "category": { "Events": "NewEra" }
-    },
-    {
-      "visibility": "public",
-      "name": "WithdrawnFromAsset",
-      "category": { "Events": "WithdrawnFromAsset" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetReward",
-      "category": { "Events": "AssetReward" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetRegistered",
-      "category": { "Events": "AssetRegistered" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetUnregistered",
-      "category": { "Events": "AssetUnregistered" }
-    },
-    {
-      "visibility": "public",
-      "name": "StakingSttoped",
-      "category": { "Events": "StakingSttoped" }
-    },
-    {
-      "visibility": "public",
-      "name": "CancelUnbond",
-      "category": { "Events": "CancelUnbond" }
-    },
-    {
-      "visibility": "public",
-      "name": "TokensDonated",
-      "category": { "Events": "TokensDonated" }
-    },
-    {
-      "visibility": "public",
-      "name": "RewardsCleaned",
-      "category": { "Events": "RewardsCleaned" }
-    },
-    {
-      "visibility": "public",
-      "name": "InsufficientValue",
-      "category": { "Error": "InsufficientValue" }
-    },
-    {
-      "visibility": "public",
-      "name": "StakingWithNoValue",
-      "category": { "Error": "StakingWithNoValue" }
-    },
-    {
-      "visibility": "public",
-      "name": "TooManyEraStakeValues",
-      "category": { "Error": "TooManyEraStakeValues" }
-    },
-    {
-      "visibility": "public",
-      "name": "UnexpectedStakeInfoEra",
-      "category": { "Error": "UnexpectedStakeInfoEra" }
-    },
-    {
-      "visibility": "public",
-      "name": "UnstakingWithNoValue",
-      "category": { "Error": "UnstakingWithNoValue" }
-    },
-    {
-      "visibility": "public",
-      "name": "TooManyUnlockingChunks",
-      "category": { "Error": "TooManyUnlockingChunks" }
-    },
-    {
-      "visibility": "public",
-      "name": "NothingToWithdraw",
-      "category": { "Error": "NothingToWithdraw" }
-    },
-    {
-      "visibility": "public",
-      "name": "EraOutOfBounds",
-      "category": { "Error": "EraOutOfBounds" }
-    },
-    {
-      "visibility": "public",
-      "name": "InvalidAPR",
-      "category": { "Error": "InvalidAPR" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetAlreadyRegistered",
-      "category": { "Error": "AssetAlreadyRegistered" }
-    },
-    {
-      "visibility": "public",
-      "name": "NotAuthorized",
-      "category": { "Error": "NotAuthorized" }
-    },
-    {
-      "visibility": "public",
-      "name": "InvalidRewardAmount",
-      "category": { "Error": "InvalidRewardAmount" }
-    },
-    {
-      "visibility": "public",
-      "name": "AssetNotRegistered",
-      "category": { "Error": "AssetNotRegistered" }
-    },
-    {
-      "visibility": "public",
-      "name": "StakingActive",
-      "category": { "Error": "StakingActive" }
-    },
-    {
-      "visibility": "public",
-      "name": "StakingNotActive",
-      "category": { "Error": "StakingNotActive" }
-    },
-    {
-      "visibility": "public",
-      "name": "NoUnbondingInfo",
-      "category": { "Error": "NoUnbondingInfo" }
-    },
-    {
-      "visibility": "public",
-      "name": "InvalidIndex",
-      "category": { "Error": "InvalidIndex" }
-    },
-    {
-      "visibility": "public",
-      "name": "InvalidAsset",
-      "category": { "Error": "InvalidAsset" }
+      "name": "vec",
+      "category": { "Helper": ["vec", []] }
     }
   ]
 }

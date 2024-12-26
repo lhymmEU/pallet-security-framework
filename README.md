@@ -29,3 +29,16 @@ Generation of mathematical correctness proofs based on identified threat vectors
 
 ### Phase 4: Dynamic Analysis
 Implementation of customized test harness for targeted fuzzing of high-severity assets.
+
+## Substack Technical Article Publication Plan
+- A gental introduction of general code analysis pipeline.
+- Dive into Rust AST: A gental introduction of the syn crate.
+- Add meanings to the code: Why & How to decorate an AST.
+- The foundation of advanced Rust code analysis: Rust Control Flow Graph Generation.
+- Security assets & threat modeling: How to map conceptual security threats with domain-specific codes & provide programmable guidance for downstream security tools [formal verification, static analysis, fuzzing].
+- The verification boundry: How to construct proof system for pallet functions & mark the ones that cannot get completely verified.
+- Pallet decoration: How to turn web3 threats into AST decorations for pallets.
+- Transaction delivery system: How to achieve 100-1000 executions per second for Polkadot runtime fuzzing.
+- Domain validity: How to achieve 5-15% well-formed (syntactically valid) transaction generation rate.
+- Catching the uncatchable: How to detect non-crashing vulnerabilities using threat models.
+- [ Final ] Create your own security tools: vulnerability detection SDK for substrate-based blockchains.

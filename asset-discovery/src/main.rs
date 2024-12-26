@@ -1,102 +1,196 @@
 use quote::quote;
 use serde::Serialize;
-use std::{collections::HashMap, fs, path::Path};
-use syn::{visit::Visit, Attribute, Error, File};
+use std::{collections::HashMap, error::Error, fs, path::Path};
+use syn::{visit::Visit, Attribute, File};
 
-fn main() {
+fn main() -> Result<(), AppError> {
     // Read source code
-    let file_content = source_code_reader().expect("Failed to read the Rust file.");
+    let file_content = loop {
+        match source_code_reader() {
+            // If we successfully read the file content, exit the loop and return the content.
+            // This breaks out of the loop with the value 'content' which becomes the value of file_content
+            Ok(content) => break content,
+            Err(e) => {
+                eprintln!("Error reading source code: {}", e);
+                if let Some(source) = e.source() {
+                    eprintln!("Caused by: {}", source);
+                }
+                continue;
+            }
+        }
+    };
 
-    // Parse source code
-    let output = parser(file_content).expect("Failed to parse the Rust file.");
+    // Parse source code into self-defined format [AssetInventory]
+    let output = parser(file_content).map_err(|e| {
+        eprintln!("Error parsing source code: {}", e);
+        if let Some(source) = e.source() {
+            eprintln!("Caused by: {}", source);
+        }
+        e
+    })?;
 
     // Write result to file
-    result_writer(output).expect("Failed to write output file");
+    result_writer(output).map_err(|e| {
+        eprintln!("Error writing results: {}", e);
+        if let Some(source) = e.source() {
+            eprintln!("Caused by: {}", source);
+        }
+        e
+    })?;
+    
+    Ok(())
 }
 
 /// Helper function to read the Rust source code file
-fn source_code_reader() -> Result<String, std::io::Error> {
-    // Path to the source code
+fn source_code_reader() -> Result<String, AppError> {
     println!("Please enter the path to the source code:");
     let mut input = String::new();
     std::io::stdin()
         .read_line(&mut input)
-        .expect("Failed to read output path");
+        .map_err(|e| AppError::IoError(e))?;
+    
     let file_path = Path::new(input.trim());
+    if !file_path.exists() {
+        return Err(AppError::InvalidInput(format!(
+            "File does not exist: {}", 
+            file_path.display()
+        )));
+    }
+    
+    if !file_path.extension().map_or(false, |ext| ext == "rs") {
+        return Err(AppError::InvalidInput(format!(
+            "Invalid file extension for {}, expected .rs file", 
+            file_path.display()
+        )));
+    }
 
-    let file_content = fs::read_to_string(file_path).expect("Failed to read the Rust file.");
-
-    // Return the content as string
-    return Ok(file_content);
+    fs::read_to_string(file_path).map_err(|e| AppError::IoError(e))
 }
 
 /// Helper function to write the result to user specified location
-fn result_writer(result: AssetInventory) -> Result<(), std::io::Error> {
-    // Transform AssetInventory into JSON
-    let result_string = result.to_json();
-
+fn result_writer(result: AssetInventory) -> Result<(), AppError> {
+    let result_string = result.to_json()
+        .map_err(|e| AppError::SerializationError(e))?;
     let output_path = Path::new("./asset-inventory.JSON");
-
-    fs::write(output_path, result_string).expect("Failed to write output file");
-    Ok(())
+    
+    fs::write(output_path, result_string)
+        .map_err(|e| AppError::IoError(e))
 }
 
-/// Helper function to parse the source code
-/// It needs to:
-/// 1. Find public pallet calls ✅
-/// 2. Extract function signatures of found public pallet calls ✅
-/// 3. Find helper functions
-/// 4. Extract storage items
-/// 5. Find cross-pallet interaction vectors (e.g. AssetsFungibles and etc.)
-/// 6. Write results to AssetInventory
-fn parser(code: String) -> Result<AssetInventory, Error> {
-    // Parse the file into a syn::File
-    let syntax_tree: File = syn::parse_file(&code).expect("Failed to parse the Rust file.");
+/// Unified visitor to collect all relevant pallet items
+struct PalletVisitor {
+    functions: HashMap<String, String>,                   // (function name, visibility)
+    params: Vec<(String, Vec<(String, String)>)>,         // (function name, [(param name, param type)])
+    storage_items: HashMap<String, String>,               // (storage name, visibility)
+    constants: Vec<String>,                               // constant names
+    events: Vec<String>,                                  // event names
+    errors: Vec<String>,                                  // error names
+}
 
-    // Visit the file to extract functions
-    let mut fn_visitor = FunctionVisitor {
+impl<'ast> Visit<'ast> for PalletVisitor {
+    // Extract function information from impl blocks
+    fn visit_item_impl(&mut self, node: &'ast syn::ItemImpl) {
+        for item in &node.items {
+            if let syn::ImplItem::Fn(method) = item {
+                let fn_name = method.sig.ident.to_string();
+                let visibility = match &method.vis {
+                    syn::Visibility::Public(_) => "public",
+                    _ => "private",
+                };
+
+                let mut param_info = Vec::new();
+                for param in method.sig.inputs.iter() {
+                    if let syn::FnArg::Typed(pat_type) = param {
+                        if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
+                            let param_name = pat_ident.ident.to_string();
+                            let param_type = quote!(#pat_type).to_string();
+                            param_info.push((param_name, param_type));
+                        }
+                    }
+                }
+
+                self.functions.insert(fn_name.clone(), visibility.to_string());
+                self.params.push((fn_name, param_info));
+            }
+        }
+        syn::visit::visit_item_impl(self, node);
+    }
+
+    // Extract storage items from pallet module
+    fn visit_item_mod(&mut self, node: &'ast syn::ItemMod) {
+        if node.ident == "pallet" {
+            if let Some((_, items)) = &node.content {
+                for item in items {
+                    if let syn::Item::Type(storage_type) = item {
+                        if storage_type.attrs.iter().any(|_attr| true) {
+                            let storage_name = storage_type.ident.to_string();
+                            let visibility = match storage_type.vis {
+                                syn::Visibility::Public(_) => "public",
+                                _ => "private",
+                            };
+                            self.storage_items.insert(storage_name, visibility.to_string());
+                        }
+                    }
+                }
+            }
+        }
+        syn::visit::visit_item_mod(self, node);
+    }
+
+    // Extract constants from traits
+    fn visit_item_trait(&mut self, node: &'ast syn::ItemTrait) {
+        for item in &node.items {
+            if let syn::TraitItem::Type(constant) = item {
+                if constant.attrs.iter().any(|attr| has_pallet_constant("pallet::constant".to_string(), attr)) {
+                    self.constants.push(constant.ident.to_string());
+                }
+            }
+        }
+    }
+
+    // Extract events and errors from enums
+    fn visit_item_enum(&mut self, node: &'ast syn::ItemEnum) {
+        let is_event = node.attrs.iter().any(|attr| has_pallet_constant("pallet::event".to_string(), attr));
+        let is_error = node.attrs.iter().any(|attr| has_pallet_constant("pallet::error".to_string(), attr));
+
+        for variant in &node.variants {
+            let name = variant.ident.to_string();
+            if is_event {
+                self.events.push(name);
+            } else if is_error {
+                self.errors.push(name);
+            }
+        }
+    }
+}
+
+/// Parse source code with unified visitor
+fn parser(code: String) -> Result<AssetInventory, AppError> {
+    let syntax_tree: File = syn::parse_file(&code)?;
+
+    // Initialize unified visitor
+    let mut visitor = PalletVisitor {
         functions: HashMap::new(),
         params: Vec::new(),
-    };
-
-    // Visit the file to extract storage items
-    let mut storage_visitor = StorageVisitor {
         storage_items: HashMap::new(),
-    };
-
-    // Visit the file to extract constants
-    let mut constant_visitor = ConstantVisitor {
         constants: Vec::new(),
-    };
-
-    // Visit the file to extract events
-    let mut event_visitor = EventVisitor {
         events: Vec::new(),
-    };
-
-    // Visit the file to extract errors 
-    let mut error_visitor = ErrorVisitor {
         errors: Vec::new(),
     };
 
     // Visit all items in the file
-    fn_visitor.visit_file(&syntax_tree);
-    storage_visitor.visit_file(&syntax_tree);
-    constant_visitor.visit_file(&syntax_tree);
-    event_visitor.visit_file(&syntax_tree);
-    error_visitor.visit_file(&syntax_tree);
+    visitor.visit_file(&syntax_tree);
 
     let mut asset_inventory = AssetInventory { assets: Vec::new() };
 
-    // Parse visitor type into Asset type
-    for (function, params) in fn_visitor.params {
-        let visibility = fn_visitor.functions.get(&function).unwrap();
-        let category: AssetCategory;
-        if visibility == "public" {
-            category = AssetCategory::PublicFunction(function.clone(), params);
+    // Convert visitor data into assets
+    for (function, params) in visitor.params {
+        let visibility = visitor.functions.get(&function).unwrap();
+        let category = if visibility == "public" {
+            AssetCategory::PublicFunction(function.clone(), params)
         } else {
-            category = AssetCategory::Helper(function.clone(), params);
-        }
+            AssetCategory::Helper(function.clone(), params)
+        };
         asset_inventory.assets.push(Asset {
             visibility: visibility.to_string(),
             name: function.clone(),
@@ -105,7 +199,7 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     }
 
     // Parse visitor type into Asset type
-    for (storage_item, visibility) in storage_visitor.storage_items {
+    for (storage_item, visibility) in visitor.storage_items {
         let category = AssetCategory::Storage(storage_item.clone(), visibility.clone());
         asset_inventory.assets.push(Asset {
             visibility: visibility.to_string(),
@@ -115,7 +209,7 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     }
 
     // Parse visitor type into Asset type
-    for constant in constant_visitor.constants {
+    for constant in visitor.constants {
         let category = AssetCategory::Constant(constant.clone());
         asset_inventory.assets.push(Asset {
             visibility: "none".to_string(),
@@ -125,7 +219,7 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     }
 
     // Parse visitor type into Asset type
-    for event in event_visitor.events {
+    for event in visitor.events {
         let category = AssetCategory::Events(event.clone());
         asset_inventory.assets.push(Asset {
             visibility: "public".to_string(),
@@ -135,7 +229,7 @@ fn parser(code: String) -> Result<AssetInventory, Error> {
     }
 
     // Parse visitor type into Asset type
-    for error in error_visitor.errors {
+    for error in visitor.errors {
         let category = AssetCategory::Error(error.clone());
         asset_inventory.assets.push(Asset {
             visibility: "public".to_string(),
@@ -173,7 +267,7 @@ enum AssetCategory {
     /// # Arguments
     /// * `String` - The name of the custom type
     /// * `String` - The purpose of the custom type
-    CustomType(String, String),
+    // CustomType(String, String),
     /// Point of interest:
     /// 1. Constants that define security thresholds
     /// 2. These constants are defined by runtime implementation, it also could cause security issues
@@ -186,7 +280,7 @@ enum AssetCategory {
     ///
     /// # Arguments
     /// * `String` - The name of the function for which the weight is defined
-    Weight(String),
+    //Weight(String),
     /// Point of interest:
     /// 1. Internal state leak through error handling
     ///
@@ -224,162 +318,8 @@ struct AssetInventory {
 }
 
 impl AssetInventory {
-    fn to_json(&self) -> String {
-        serde_json::to_string(self).expect("Failed to serialize AssetInventory to JSON")
-    }
-}
-
-/// Visitor to find functions in the Rust file.
-struct FunctionVisitor {
-    functions: HashMap<String, String>, // Store function name and their visibility
-    params: Vec<(String, Vec<(String, String)>)>, // (function name, parameter names and types)
-}
-
-impl<'ast> Visit<'ast> for FunctionVisitor {
-    // Substrate Pallet functions are nested in impl blocks
-    fn visit_item_impl(&mut self, node: &'ast syn::ItemImpl) {
-        // Visit all items in the impl block
-        for item in &node.items {
-            // Extract function information
-            if let syn::ImplItem::Fn(method) = item {
-                let fn_name = method.sig.ident.to_string();
-
-                // Determine function visibility
-                let visibility = match &method.vis {
-                    syn::Visibility::Public(_) => "public",
-                    _ => "private",
-                };
-
-                // Extract parameter names and types
-                let mut param_info = Vec::new();
-                for param in method.sig.inputs.iter() {
-                    if let syn::FnArg::Typed(pat_type) = param {
-                        if let syn::Pat::Ident(pat_ident) = &*pat_type.pat {
-                            let param_name = pat_ident.ident.to_string();
-                            let param_type = quote!(#pat_type).to_string();
-                            param_info.push((param_name, param_type));
-                        }
-                    }
-                }
-
-                self.functions
-                    .insert(fn_name.clone(), visibility.to_string());
-                self.params.push((fn_name, param_info));
-            }
-        }
-        syn::visit::visit_item_impl(self, node);
-    }
-}
-
-/// Visitor to find storage items in the Rust file.
-struct StorageVisitor {
-    storage_items: HashMap<String, String>, // (storage item name, storage item visibility)
-}
-
-impl<'ast> Visit<'ast> for StorageVisitor {
-    fn visit_item_mod(&mut self, node: &'ast syn::ItemMod) {
-        // Check if this is the pallet module
-        if node.ident == "pallet" {
-            // Visit the module contents if available
-            if let Some((_, items)) = &node.content {
-                for item in items {
-                    // Look for storage items marked with #[pallet::storage]
-                    if let syn::Item::Type(storage_type) = item {
-                        // Check if the type has the #[pallet::storage] attribute
-                        //println!("Attributes for {} is {:#?}", storage_type.ident.to_string(), storage_type.attrs);
-                        if storage_type.attrs.iter().any(|_attr| true) {
-                            let storage_name = storage_type.ident.to_string();
-                            match storage_type.vis {
-                                syn::Visibility::Public(_) => {
-                                    self.storage_items
-                                        .insert(storage_name, "public".to_string());
-                                }
-                                _ => {
-                                    self.storage_items
-                                        .insert(storage_name, "private".to_string());
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // Continue visiting other modules
-        syn::visit::visit_item_mod(self, node);
-    }
-}
-
-/// Visitor to find constants in the Rust file.
-struct ConstantVisitor {
-    constants: Vec<String>,
-}
-
-impl<'ast> Visit<'ast> for ConstantVisitor {
-    fn visit_item_trait(&mut self, node: &'ast syn::ItemTrait) {
-        // Then process the current trait's items
-        for item in &node.items {
-            if let syn::TraitItem::Type(constant) = item {
-                // Check if any attribute matches #[pallet::constant]
-                // One interesting thing to notice is that, doc comments are considered as attributes in the form of #[doc = "..."]
-                // Which means, in the eyes of syn crate a constant with comments looks like this:
-                //  #[doc = "..."]
-                //  #[pallet::constant]
-                //  type StringLimit: Get<u32>;
-                let res = constant
-                    .attrs
-                    .iter()
-                    .any(|attr| has_pallet_constant("pallet::constant".to_string(), attr));
-
-                if res {
-                    let constant_name = constant.ident.to_string();
-                    self.constants.push(constant_name);
-                }
-            }
-        }
-    }
-}
-
-// Visitor to find events in the Rust file.
-struct EventVisitor {
-    events: Vec<String>,
-}
-
-impl<'ast> Visit<'ast> for EventVisitor {
-    fn visit_item_enum(&mut self, node: &'ast syn::ItemEnum) {
-        // First check if this enum has the #[pallet::event] attribute
-        let res = node.attrs.iter().any(|attr| {
-            has_pallet_constant("pallet::event".to_string(), attr)
-        });
-
-        // If the enum has the #[pallet::event] attribute, then process all variants
-        if res {
-            for variant in &node.variants {
-                let event_name = variant.ident.to_string();
-                self.events.push(event_name);
-            }
-        }
-    }
-}
-
-// Visitor to find errors in the Rust file.
-struct ErrorVisitor {
-    errors: Vec<String>,
-}
-
-impl<'ast> Visit<'ast> for ErrorVisitor {
-    fn visit_item_enum(&mut self, node: &'ast syn::ItemEnum) {
-        // First check if this enum has the #[pallet::error] attribute
-        let res = node.attrs.iter().any(|attr| {
-            has_pallet_constant("pallet::error".to_string(), attr)
-        });
-
-        // If the enum has the #[pallet::error] attribute, then process all variants
-        if res {
-            for variant in &node.variants {
-                let error_name = variant.ident.to_string();
-                self.errors.push(error_name);
-            }
-        }
+    fn to_json(&self) -> Result<String, serde_json::Error> {
+        serde_json::to_string(self)
     }
 }
 
@@ -395,4 +335,56 @@ fn has_pallet_constant(name: String, attrs: &Attribute) -> bool {
         .join("::");
 
     path_str == name
+}
+
+// ----------------------------------------------Robust Error Handling----------------------------------------------
+
+// Custom error type for the application
+#[derive(Debug)]
+enum AppError {
+    IoError(std::io::Error),
+    ParseError(syn::Error),
+    SerializationError(serde_json::Error),
+    InvalidInput(String),
+}
+
+impl std::fmt::Display for AppError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            AppError::IoError(err) => write!(f, "IO Error: {}", err),
+            AppError::ParseError(err) => write!(f, "Parse Error: {}", err),
+            AppError::SerializationError(err) => write!(f, "Serialization Error: {}", err),
+            AppError::InvalidInput(msg) => write!(f, "Invalid Input: {}", msg),
+        }
+    }
+}
+
+// Implement std::error::Error trait for better error handling
+impl std::error::Error for AppError {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            AppError::IoError(err) => Some(err),
+            AppError::ParseError(err) => Some(err),
+            AppError::SerializationError(err) => Some(err),
+            AppError::InvalidInput(_) => None,
+        }
+    }
+}
+
+impl From<std::io::Error> for AppError {
+    fn from(err: std::io::Error) -> Self {
+        AppError::IoError(err)
+    }
+}
+
+impl From<syn::Error> for AppError {
+    fn from(err: syn::Error) -> Self {
+        AppError::ParseError(err)
+    }
+}
+
+impl From<serde_json::Error> for AppError {
+    fn from(err: serde_json::Error) -> Self {
+        AppError::SerializationError(err)
+    }
 }
