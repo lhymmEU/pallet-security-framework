@@ -1,17 +1,32 @@
-# Threat Modeling Purpose
-The goal of creating an automated threat modeling tool is to effectively guide down stream resource-intensive tools like model checker and fuzzer.
+### Security Methods
 
-## The Imagined Approach
-- Customize threat models: A dedicated threat modeling form for users to define customized threat models.
-- Pattern creation: Transform threat models into patterns that serves as an input to a dedicated threat parser.
-- Pallet threat analyzer: Built on the "syn" crate, using generated patterns as rules to analyze the syntax tree.
-- Automated guidance generation: Generate assumptions and assertions for Kani to do model checking. This should have some similarity to taint analysis.
-- (Optional) Manual guidance generation: Create state machines for critical pallets to enhance the assumptions & assertions generated in the previous step.
+- **Symbolic execution** for single functions within pallets
+    - **[hardest] Generates CFG for each function**
+    - Generates concrete test cases automatically
+- **Model checking** for runtime
+    - **[hardest] Generates finite-state machine for runtime**
+    - **[hardest] Handle state explosion problem**
+    - Check state transitions validity
+    - Invariant preservation during runtime upgrades
+    - Threat model checking - business logic-related
+        - Validity of balance transfers and account management
+        - Access control and permission enforcement
+        - etc.
+- **Generation-based Black-box fuzzer** for random runtime testing
 
-## TODO
-- Define the threat model data structure
-- Model one threat and manually inject a threat according to the model into a pallet
-- Define a pattern that could catch the injected threat
-- Build a translator function to turn threat model into the pattern
-- Build a threat analyzer that can mark the injected threat
-- Build a modified taint analysis algorithm to generate constraints for Kani
+### System Layers
+
+- **Threat description layer**: Describe high-level, domain-specific threats for each feature.
+- **Threat translation layer**: Translate requirements into intermediary formats (might require domain-specific language to describe threats similar to ProLeMa).
+- **Threat database layer**: Well-formatted known threats.
+- **Threat mapping layer**: Map translated domain-specific & known threats to discovered assets.
+- **Scheduling layer**:
+    - Generate then separate security tasks into three categories
+        - Symbolic execution: testing single functions for known threats
+        - Formal verification (model-checking for now): for runtime with constraints
+        - Fuzzing: for the things exceed the formal verification constraints
+    - Schedule and manage progresses of symbolic execution and model checking.
+- **Symbolic execution layer**: Customizable execution engine for different use cases (only need a pre-configured one for MVP).
+- **Formal verification layer**: Customizable verification engine for different use cases (only need a pre-configured one for MVP).
+- **Fuzzing layer**: Fuzzing engine with customizable threat oracles (only need one threat oracle for MVP).
+- **TODO layer**: Based-on researches, there are some high probabilities of integrating ML with security testing tools, need to figure out where are the integration points for each tool.
