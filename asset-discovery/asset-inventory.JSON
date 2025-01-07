@@ -1,117 +1,423 @@
 {
   "assets": [
     {
-      "visibility": "private",
-      "name": "is_empty",
-      "category": { "Helper": ["is_empty", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "new",
+      "visibility": "public",
+      "name": "create_store",
       "category": {
-        "Helper": [
-          "new",
+        "PublicFunction": [
+          "create_store",
           [
-            ["staked", "staked : Balance"],
-            ["era", "era : EraIndex"],
-            ["timestamp", "timestamp : Moment"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "is_empty",
-      "category": { "Helper": ["is_empty", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "len",
-      "category": { "Helper": ["len", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "stake",
-      "category": {
-        "Helper": [
-          "stake",
-          [
-            ["current_era", "current_era : EraIndex"],
-            ["value", "value : Balance"],
-            ["now", "now : Moment"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "unstake",
-      "category": {
-        "Helper": [
-          "unstake",
-          [
-            ["current_era", "current_era : EraIndex"],
-            ["value", "value : Balance"],
-            ["now", "now : Moment"]
-          ]
-        ]
-      }
-    },
-    {
-      "visibility": "private",
-      "name": "claim",
-      "category": {
-        "Helper": [
-          "claim",
-          [
-            ["current_era", "current_era : EraIndex"],
-            ["now", "now : Moment"],
-            ["max_iterations", "max_iterations : u32"]
+            ["origin", "origin : OriginFor < T >"],
+            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
+            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
+            ["asset_id", "asset_id : AssetId < T >"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "latest_staked_value",
-      "category": { "PublicFunction": ["latest_staked_value", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "add_amount",
-      "category": { "Helper": ["add_amount", [["amount", "amount : Balance"]]] }
-    },
-    {
-      "visibility": "private",
-      "name": "len",
-      "category": { "Helper": ["len", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "is_empty",
-      "category": { "Helper": ["is_empty", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "sum",
-      "category": { "Helper": ["sum", []] }
-    },
-    {
-      "visibility": "private",
-      "name": "add",
+      "name": "add_product",
       "category": {
-        "Helper": ["add", [["chunk", "chunk : UnlockingChunk < Balance >"]]]
+        "PublicFunction": [
+          "add_product",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
+            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
+            ["store_id", "store_id : u32"],
+            ["product_price", "product_price : T :: BalanceOf"],
+            ["asset_id", "asset_id : AssetId < T >"],
+            ["initial_inventory", "initial_inventory : u32"],
+            ["sku", "sku : BoundedVec < u8 , T :: SKULimit >"],
+            ["image", "image : ProductImage < T :: UrlLimit >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "edit_store",
+      "category": {
+        "PublicFunction": [
+          "edit_store",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
+            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
+            ["store_id", "store_id : u32"],
+            ["asset_id", "asset_id : AssetId < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "edit_product",
+      "category": {
+        "PublicFunction": [
+          "edit_product",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
+            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"],
+            ["product_price", "product_price : T :: BalanceOf"],
+            ["asset_id", "asset_id : AssetId < T >"],
+            ["sku", "sku : BoundedVec < u8 , T :: SKULimit >"],
+            ["image", "image : ProductImage < T :: UrlLimit >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "delete_store",
+      "category": {
+        "PublicFunction": [
+          "delete_store",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["asset_id", "asset_id : AssetId < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "delete_product",
+      "category": {
+        "PublicFunction": [
+          "delete_product",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"],
+            ["asset_id", "asset_id : AssetId < T >"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "buy_product",
+      "category": {
+        "PublicFunction": [
+          "buy_product",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "add_to_cart",
+      "category": {
+        "PublicFunction": [
+          "add_to_cart",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "update_inventory",
+      "category": {
+        "PublicFunction": [
+          "update_inventory",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetId < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"],
+            ["additional_quantity", "additional_quantity : u32"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "update_order_status",
+      "category": {
+        "PublicFunction": [
+          "update_order_status",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["order_id", "order_id : u32"],
+            ["new_status", "new_status : OrderState"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "checkout",
+      "category": {
+        "PublicFunction": ["checkout", [["origin", "origin : OriginFor < T >"]]]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "remove_from_cart",
+      "category": {
+        "PublicFunction": [
+          "remove_from_cart",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"]
+          ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "reduce_inventory",
+      "category": {
+        "PublicFunction": [
+          "reduce_inventory",
+          [
+            ["origin", "origin : OriginFor < T >"],
+            ["asset_id", "asset_id : AssetId < T >"],
+            ["store_id", "store_id : u32"],
+            ["product_id", "product_id : u32"],
+            ["reduce_quantity", "reduce_quantity : u32"]
+          ]
+        ]
       }
     },
     {
       "visibility": "private",
-      "name": "partition",
-      "category": { "Helper": ["partition", [["era", "era : EraIndex"]]] }
+      "name": "validate_status_transition",
+      "category": {
+        "Helper": [
+          "validate_status_transition",
+          [
+            ["current", "current : OrderState"],
+            ["new", "new : OrderState"]
+          ]
+        ]
+      }
     },
     {
       "visibility": "private",
-      "name": "vec",
-      "category": { "Helper": ["vec", []] }
+      "name": "StoreProducts",
+      "category": { "Storage": ["StoreProducts", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "BalanceOf",
+      "category": { "Storage": ["BalanceOf", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreId",
+      "category": { "Storage": ["StoreId", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "StoreItem",
+      "category": { "Storage": ["StoreItem", "private"] }
+    },
+    {
+      "visibility": "private",
+      "name": "StoresPerUser",
+      "category": { "Storage": ["StoresPerUser", "private"] }
+    },
+    {
+      "visibility": "private",
+      "name": "CartItems",
+      "category": { "Storage": ["CartItems", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreProductList",
+      "category": { "Storage": ["StoreProductList", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "OrderItem",
+      "category": { "Storage": ["OrderItem", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderId",
+      "category": { "Storage": ["OrderId", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "OrderStatus",
+      "category": { "Storage": ["OrderStatus", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ProductId",
+      "category": { "Storage": ["ProductId", "public"] }
+    },
+    {
+      "visibility": "none",
+      "name": "StringLimit",
+      "category": { "Constant": "StringLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "DataLimit",
+      "category": { "Constant": "DataLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "CartItemsLimit",
+      "category": { "Constant": "CartItemsLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxProductsPerStore",
+      "category": { "Constant": "MaxProductsPerStore" }
+    },
+    {
+      "visibility": "none",
+      "name": "MaxInventoryAmount",
+      "category": { "Constant": "MaxInventoryAmount" }
+    },
+    {
+      "visibility": "none",
+      "name": "SKULimit",
+      "category": { "Constant": "SKULimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "UrlLimit",
+      "category": { "Constant": "UrlLimit" }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreCreated",
+      "category": { "Events": "StoreCreated" }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreModified",
+      "category": { "Events": "StoreModified" }
+    },
+    {
+      "visibility": "public",
+      "name": "ProductAdded",
+      "category": { "Events": "ProductAdded" }
+    },
+    {
+      "visibility": "public",
+      "name": "ProductModified",
+      "category": { "Events": "ProductModified" }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderAdded",
+      "category": { "Events": "OrderAdded" }
+    },
+    {
+      "visibility": "public",
+      "name": "RemovedStore",
+      "category": { "Events": "RemovedStore" }
+    },
+    {
+      "visibility": "public",
+      "name": "RemovedProduct",
+      "category": { "Events": "RemovedProduct" }
+    },
+    {
+      "visibility": "public",
+      "name": "AddedToCart",
+      "category": { "Events": "AddedToCart" }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderStatusUpdated",
+      "category": { "Events": "OrderStatusUpdated" }
+    },
+    {
+      "visibility": "public",
+      "name": "InventoryUpdated",
+      "category": { "Events": "InventoryUpdated" }
+    },
+    {
+      "visibility": "public",
+      "name": "RemovedFromCart",
+      "category": { "Events": "RemovedFromCart" }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreAlreadyCreated",
+      "category": { "Error": "StoreAlreadyCreated" }
+    },
+    {
+      "visibility": "public",
+      "name": "StoreNotFound",
+      "category": { "Error": "StoreNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "ProductNotFound",
+      "category": { "Error": "ProductNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "YouAreNotTheStoreOwner",
+      "category": { "Error": "YouAreNotTheStoreOwner" }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderNotFound",
+      "category": { "Error": "OrderNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "InsufficientInventory",
+      "category": { "Error": "InsufficientInventory" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidOrderStatusTransition",
+      "category": { "Error": "InvalidOrderStatusTransition" }
+    },
+    {
+      "visibility": "public",
+      "name": "EmptyCart",
+      "category": { "Error": "EmptyCart" }
+    },
+    {
+      "visibility": "public",
+      "name": "CartFull",
+      "category": { "Error": "CartFull" }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderAlreadyExists",
+      "category": { "Error": "OrderAlreadyExists" }
+    },
+    {
+      "visibility": "public",
+      "name": "TooManyProducts",
+      "category": { "Error": "TooManyProducts" }
+    },
+    {
+      "visibility": "public",
+      "name": "OrderAlreadyProcessing",
+      "category": { "Error": "OrderAlreadyProcessing" }
+    },
+    {
+      "visibility": "public",
+      "name": "ExcessiveInventory",
+      "category": { "Error": "ExcessiveInventory" }
     }
   ]
 }

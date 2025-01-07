@@ -30,3 +30,22 @@
 - **Formal verification layer**: Customizable verification engine for different use cases (only need a pre-configured one for MVP).
 - **Fuzzing layer**: Fuzzing engine with customizable threat oracles (only need one threat oracle for MVP).
 - **TODO layer**: Based-on researches, there are some high probabilities of integrating ML with security testing tools, need to figure out where are the integration points for each tool.
+
+### Tool Workflow
+- Take the JSON file produced by asset discovery tool as an input
+- Build a system model using the asset discovered
+- Take natural language threat description from users
+- Translate the threats into an internal data structure
+- Create an asset <-> threat mapping using translated threats and built-in threat database
+- Use the created mapping to create security tasks for three downstream tools: symbolic execution, model checking, and fuzzing
+- Call the tools and manage the progress
+- Generate reports
+
+### Todo List Before Implementing the SE Tool
+- JSON file reader
+- System model data structure
+- Threat data structure
+- Connection with LLMs
+- [hardest] Deterministic output parser for LLM results
+- Build a known threat database
+- Asset <-> threat mapping function
