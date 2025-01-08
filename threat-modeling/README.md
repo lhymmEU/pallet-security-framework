@@ -42,7 +42,7 @@
 - Generate reports
 
 ### Todo List Before Implementing the SE Tool
-- JSON file reader
+- ✅ JSON file reader
 - System model data structure
 - Threat data structure
 - Connection with LLMs
