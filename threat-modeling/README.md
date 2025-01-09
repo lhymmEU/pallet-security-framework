@@ -43,8 +43,8 @@
 
 ### Todo List Before Implementing the SE Tool
 - ✅ JSON file reader
-- System model data structure
-- Threat data structure
+- ✅ Pallet model data structure -> this is used to construct an internal model for pallets
+- Threat data structure -> this is solely used to model threats, will be appended to the pallet model above
 - Connection with LLMs
 - [hardest] Deterministic output parser for LLM results
 - Build a known threat database
