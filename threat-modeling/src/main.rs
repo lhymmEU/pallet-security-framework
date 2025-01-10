@@ -3,8 +3,14 @@ use std::fs::File;
 use std::io::BufReader;
 use std::path::Path;
 use std::collections::HashMap;
+use threat_modeling::utils::llm::query_llm;
 
-fn main() {
+#[tokio::main]
+async fn main() {
+    // Test LLM connection
+    let resp = query_llm("Introduce Polkadot pallet.").await;
+    println!("OpenAI response is: {}", resp);
+
     // User input file path
     println!("Please enter the path to the JSON file:");
     let mut input = String::new();
@@ -245,10 +251,35 @@ impl SecurityAssetRegistry {
 // -----------------------------------------------Threat Model Data Structures-------------------------------------
 
 /// Threat model data structure
+/// This structure will be used to:
+/// 1. Store known threats
+/// 2. Store translated threats from natural language using LLM
+/// 
+/// Basically, this represent the question "what needs to be checked and how to check it"
 #[derive(Debug, Clone)]
 pub struct Threat {
-    name: String,
-    description: String,
+    // The name of the threat, e.g. "User controled input"
+    name: ThreatType,
+    // How to check the threat, e.g. "Input Sanitization".
+    // This will only be the category of checking, the actual checking will be involved during symbolic execution, maybe through LLM tool calling and etc.
+    how_to_check: SecurityCheck,
+    // TODO: Add other fields
+
+}
+
+#[derive(Debug, Clone)]
+enum SecurityCheck {
+    InputSanitization,
+}
+
+#[derive(Debug, Clone)]
+enum ThreatType {
+    UserControlledInput,
+}
+
+// Dummy implementation for input sanitization
+fn input_sanitization() {
+    println!("Check this input for length and character set");
 }
 
 // -----------------------------------------------Helper Functions----------------------------------------------
