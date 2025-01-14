@@ -7,10 +7,6 @@ use threat_modeling::utils::llm::query_llm;
 
 #[tokio::main]
 async fn main() {
-    // Test LLM connection
-    let resp = query_llm("Introduce Polkadot pallet.").await;
-    println!("OpenAI response is: {}", resp);
-
     // User input file path
     println!("Please enter the path to the JSON file:");
     let mut input = String::new();
@@ -22,7 +18,10 @@ async fn main() {
 
     // Read JSON file
     let json = read_json(file_path).unwrap();
-    println!("JSON file read successfully: {:?}", json["assets"][0]["name"]);
+
+    // Parse the JSON file into the internal data structure
+    let assets = parse_asset_inventory_into_asset_model(json);
+    println!("Parsed assets: {:?}", assets);
 }
 
 // ----------------------------------------Pallet Model Data Structures-------------------------------------
@@ -49,8 +48,8 @@ pub enum AssetCategory {
     },
     Storage(StorageConfig),
     Constant {
-        value_type: String,
         name: String,
+        value_type: String,
     },
     Event {
         name: String,
@@ -69,11 +68,11 @@ pub struct Parameter {
     param_type: String,
 }
 
-/// Storage type classification
+// Supporting struct for Storage variant
 #[derive(Debug, Clone)]
-pub enum StorageType {
-    Public,
-    Private,
+pub struct StorageConfig {
+    visibility: Visibility,
+    name: String,
 }
 
 /// Core asset representation
@@ -83,6 +82,51 @@ pub struct Asset {
     visibility: Visibility,
     category: AssetCategory,
     properties: Properties,
+}
+
+/// Risk level is for the asset itself, not the threats mapped to it
+/// This is used to prioritize assets for security analysis
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub enum RiskLevel {
+    Critical,
+    High,
+    Medium,
+    #[default]
+    Low,
+}
+
+// -----------------------------------------------Threat Model Data Structures-------------------------------------
+
+/// Threat model data structure
+/// This structure will be used to:
+/// 1. Store known threats
+/// 2. Store translated threats from natural language using LLM
+/// 
+/// Basically, this represent the question "what needs to be checked and how to check it"
+#[derive(Debug, Clone)]
+pub struct Threat {
+    // The name of the threat, e.g. "User controled input"
+    name: ThreatType,
+    // How to check the threat, e.g. "Input Sanitization".
+    // This will only be the category of checking, the actual checking will be involved during symbolic execution, maybe through LLM tool calling and etc.
+    how_to_check: SecurityCheck,
+    // TODO: Add other fields
+
+}
+
+#[derive(Debug, Clone)]
+enum SecurityCheck {
+    InputSanitization,
+}
+
+#[derive(Debug, Clone)]
+enum ThreatType {
+    UserControlledInput,
+}
+
+// Dummy implementation for input sanitization
+fn input_sanitization() {
+    println!("Check this input for length and character set");
 }
 
 /// Extensible security properties
@@ -99,17 +143,6 @@ pub struct Properties {
     state_transitions: Vec<StateTransition>,
     // Value constraints for this asset, prepared by internal functions
     value_constraints: Vec<ValueConstraint>,
-}
-
-/// Risk level is for the asset itself, not the threats mapped to it
-/// This is used to prioritize assets for security analysis
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
-pub enum RiskLevel {
-    Critical,
-    High,
-    Medium,
-    #[default]
-    Low,
 }
 
 #[derive(Debug, Clone)]
@@ -248,40 +281,6 @@ impl SecurityAssetRegistry {
     }
 }
 
-// -----------------------------------------------Threat Model Data Structures-------------------------------------
-
-/// Threat model data structure
-/// This structure will be used to:
-/// 1. Store known threats
-/// 2. Store translated threats from natural language using LLM
-/// 
-/// Basically, this represent the question "what needs to be checked and how to check it"
-#[derive(Debug, Clone)]
-pub struct Threat {
-    // The name of the threat, e.g. "User controled input"
-    name: ThreatType,
-    // How to check the threat, e.g. "Input Sanitization".
-    // This will only be the category of checking, the actual checking will be involved during symbolic execution, maybe through LLM tool calling and etc.
-    how_to_check: SecurityCheck,
-    // TODO: Add other fields
-
-}
-
-#[derive(Debug, Clone)]
-enum SecurityCheck {
-    InputSanitization,
-}
-
-#[derive(Debug, Clone)]
-enum ThreatType {
-    UserControlledInput,
-}
-
-// Dummy implementation for input sanitization
-fn input_sanitization() {
-    println!("Check this input for length and character set");
-}
-
 // -----------------------------------------------Helper Functions----------------------------------------------
 
 // Read JSON file into a JSON object
@@ -292,10 +291,88 @@ fn read_json(file_path: &Path) -> Result<serde_json::Value, Box<dyn Error>> {
     Ok(json)
 }
 
-// Supporting struct for Storage variant
-#[derive(Debug, Clone)]
-pub struct StorageConfig {
-    storage_type: StorageType,
-    value_type: String,
-    // Add other storage-specific fields
+// Parse the JSON file into the internal data structure
+fn parse_asset_inventory_into_asset_model(assets: serde_json::Value) -> Vec<Asset> {
+    let mut result = Vec::new();
+    
+    // Extract the assets array
+    let assets_array = assets["assets"].as_array().unwrap();
+    
+    for asset in assets_array {
+        // Parse visibility
+        let visibility = match asset["visibility"].as_str().unwrap_or("none") {
+            "public" => Visibility::Public,
+            "private" => Visibility::Private,
+            _ => Visibility::None,
+        };
+
+        let name = asset["name"].as_str().unwrap_or("").to_string();
+        
+        // Parse category
+        let category = match asset["category"].as_object().and_then(|c| c.keys().next()).map(String::as_str) {
+            Some("PublicFunction") => {
+                let params = asset["category"]["PublicFunction"][1]
+                    .as_array()
+                    .unwrap_or(&Vec::new())
+                    .iter()
+                    .map(|p| Parameter {
+                        name: p[0].as_str().unwrap_or("").to_string(),
+                        param_type: p[1].as_str().unwrap_or("").to_string(),
+                    })
+                    .collect();
+                
+                AssetCategory::PublicFunction {
+                    parameters: params,
+                    return_type: None,
+                }
+            },
+            Some("Helper") => {
+                let params = asset["category"]["Helper"][1]
+                    .as_array()
+                    .unwrap_or(&Vec::new())
+                    .iter()
+                    .map(|p| Parameter {
+                        name: p[0].as_str().unwrap_or("").to_string(),
+                        param_type: p[1].as_str().unwrap_or("").to_string(),
+                    })
+                    .collect();
+                
+                AssetCategory::Helper {
+                    parameters: params,
+                    return_type: None,
+                }
+            },
+            Some("Storage") => {
+                AssetCategory::Storage(StorageConfig {
+                    visibility: visibility.clone(),
+                    name: name.clone(),
+                })
+            },
+            Some("Constant") => AssetCategory::Constant {
+                value_type: "".to_string(), // Type information not provided in JSON
+                name: name.clone(),
+            },
+            Some("Events") => AssetCategory::Event {
+                name: name.clone(),
+                fields: Vec::new(), // Event fields not provided in JSON
+            },
+            Some("Error") => AssetCategory::Error {
+                name: name.clone(),
+                fields: Vec::new(), // Error fields not provided in JSON
+            },
+            _ => continue, // Skip invalid categories
+        };
+
+        // Create asset with default properties
+        let asset = Asset {
+            name,
+            visibility,
+            category,
+            properties: Properties::default(),
+        };
+
+        result.push(asset);
+    }
+
+    result
 }
