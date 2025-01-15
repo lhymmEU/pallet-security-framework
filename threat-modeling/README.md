@@ -47,6 +47,7 @@
 - ✅ Threat data structure -> this is solely used to model threats, will be appended to the pallet model above
 - ✅ Connection with LLMs
 - [hardest] Deterministic output parser for LLM results
-- Parse discovered assets into desired internal data structure
-- Build a known threat database
+- ✅ Parse discovered assets into desired internal data structure
 - Asset <-> threat mapping function
+- PoC unit test generation using Rust macros to handle substrate types
+- Automated unit test generation through macros
