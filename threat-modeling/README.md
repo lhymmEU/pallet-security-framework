@@ -48,6 +48,6 @@
 - ✅ Connection with LLMs
 - [hardest] Deterministic output parser for LLM results
 - ✅ Parse discovered assets into desired internal data structure
-- Asset <-> threat mapping function
 - PoC unit test generation using Rust macros to handle substrate types
+- Asset <-> threat mapping function
 - Automated unit test generation through macros
