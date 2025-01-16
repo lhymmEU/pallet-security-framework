@@ -1,423 +1,727 @@
 {
   "assets": [
     {
+      "visibility": "private",
+      "name": "default",
+      "category": { "Helper": ["default", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "build",
+      "category": { "Helper": ["build", []] }
+    },
+    {
+      "visibility": "private",
+      "name": "on_initialize",
+      "category": {
+        "Helper": ["on_initialize", [["now", "now : BlockNumberFor < T >"]]]
+      }
+    },
+    {
       "visibility": "public",
-      "name": "create_store",
+      "name": "register_worker",
       "category": {
         "PublicFunction": [
-          "create_store",
+          "register_worker",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
-            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
-            ["asset_id", "asset_id : AssetId < T >"]
+            ["stakedamount", "stakedamount : T :: AssetBalance"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "add_product",
+      "name": "unregister_worker",
       "category": {
         "PublicFunction": [
-          "add_product",
+          "unregister_worker",
+          [["origin", "origin : OriginFor < T >"]]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "increase_shares",
+      "category": {
+        "PublicFunction": [
+          "increase_shares",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
-            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
-            ["store_id", "store_id : u32"],
-            ["product_price", "product_price : T :: BalanceOf"],
-            ["asset_id", "asset_id : AssetId < T >"],
-            ["initial_inventory", "initial_inventory : u32"],
-            ["sku", "sku : BoundedVec < u8 , T :: SKULimit >"],
-            ["image", "image : ProductImage < T :: UrlLimit >"]
+            ["amount_to_stake", "amount_to_stake : T :: AssetBalance"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "edit_store",
+      "name": "get_back_staking_after_unregister",
       "category": {
         "PublicFunction": [
-          "edit_store",
+          "get_back_staking_after_unregister",
+          [["origin", "origin : OriginFor < T >"]]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "vote_for_deposit",
+      "category": {
+        "PublicFunction": [
+          "vote_for_deposit",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
-            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
-            ["store_id", "store_id : u32"],
-            ["asset_id", "asset_id : AssetId < T >"]
+            ["deposit_id", "deposit_id : DepositId"],
+            ["deposit_result", "deposit_result : Responses"],
+            [
+              "tx_hash",
+              "tx_hash : Option < BoundedVec < u8 , T :: HashLengthLimit > >"
+            ]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "edit_product",
+      "name": "set_deposit_result",
       "category": {
         "PublicFunction": [
-          "edit_product",
+          "set_deposit_result",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["title", "title : BoundedVec < u8 , T :: DataLimit >"],
-            ["description", "description : BoundedVec < u8 , T :: DataLimit >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"],
-            ["product_price", "product_price : T :: BalanceOf"],
-            ["asset_id", "asset_id : AssetId < T >"],
-            ["sku", "sku : BoundedVec < u8 , T :: SKULimit >"],
-            ["image", "image : ProductImage < T :: UrlLimit >"]
+            ["deposit_id", "deposit_id : DepositId"],
+            [
+              "tx_hash",
+              "tx_hash : Option < BoundedVec < u8 , T :: HashLengthLimit > >"
+            ]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "delete_store",
+      "name": "slash_worker_for_deposit",
       "category": {
         "PublicFunction": [
-          "delete_store",
+          "slash_worker_for_deposit",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["asset_id", "asset_id : AssetId < T >"]
+            ["deposit_id", "deposit_id : DepositId"],
+            ["malicious", "malicious : T :: AccountId"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "delete_product",
+      "name": "vote_for_withdraw",
       "category": {
         "PublicFunction": [
-          "delete_product",
+          "vote_for_withdraw",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"],
-            ["asset_id", "asset_id : AssetId < T >"]
+            ["withdraw_id", "withdraw_id : WithdrawId"],
+            [
+              "tx_hash",
+              "tx_hash : Option < BoundedVec < u8 , T :: HashLengthLimit > >"
+            ]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "buy_product",
+      "name": "set_withdraw_result",
       "category": {
         "PublicFunction": [
-          "buy_product",
+          "set_withdraw_result",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"]
+            ["withdraw_id", "withdraw_id : WithdrawId"],
+            [
+              "tx_hash",
+              "tx_hash : Option < BoundedVec < u8 , T :: HashLengthLimit > >"
+            ]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "add_to_cart",
+      "name": "slash_worker_for_withdraw",
       "category": {
         "PublicFunction": [
-          "add_to_cart",
+          "slash_worker_for_withdraw",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"]
+            ["withdraw_id", "withdraw_id : WithdrawId"],
+            ["malicious", "malicious : T :: AccountId"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "update_inventory",
+      "name": "propose_prices",
       "category": {
         "PublicFunction": [
-          "update_inventory",
+          "propose_prices",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetId < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"],
-            ["additional_quantity", "additional_quantity : u32"]
+            [
+              "values",
+              "values : BoundedVec < (T :: OracleKey , T :: OracleValue , T :: OracleSupply , DailyPriceChange) , T :: PricesLimit >"
+            ]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "update_order_status",
+      "name": "give_agreement",
       "category": {
         "PublicFunction": [
-          "update_order_status",
+          "give_agreement",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["order_id", "order_id : u32"],
-            ["new_status", "new_status : OrderState"]
+            ["answer", "answer : Responses"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "checkout",
-      "category": {
-        "PublicFunction": ["checkout", [["origin", "origin : OriginFor < T >"]]]
-      }
-    },
-    {
-      "visibility": "public",
-      "name": "remove_from_cart",
+      "name": "request_consensus_prices",
       "category": {
         "PublicFunction": [
-          "remove_from_cart",
+          "request_consensus_prices",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"]
+            ["era", "era : EraIndex"],
+            ["answer_consensus", "answer_consensus : Responses"]
           ]
         ]
       }
     },
     {
       "visibility": "public",
-      "name": "reduce_inventory",
+      "name": "manage_slashing_prices",
       "category": {
         "PublicFunction": [
-          "reduce_inventory",
+          "manage_slashing_prices",
           [
             ["origin", "origin : OriginFor < T >"],
-            ["asset_id", "asset_id : AssetId < T >"],
-            ["store_id", "store_id : u32"],
-            ["product_id", "product_id : u32"],
-            ["reduce_quantity", "reduce_quantity : u32"]
+            ["era", "era : EraIndex"],
+            ["malicious", "malicious : T :: AccountId"],
+            ["reason", "reason : SlashReason"]
           ]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "recover_from_slashing",
+      "category": {
+        "PublicFunction": [
+          "recover_from_slashing",
+          [["origin", "origin : OriginFor < T >"]]
+        ]
+      }
+    },
+    {
+      "visibility": "public",
+      "name": "clean_stale_withdraws",
+      "category": {
+        "PublicFunction": [
+          "clean_stale_withdraws",
+          [["origin", "origin : OriginFor < T >"]]
         ]
       }
     },
     {
       "visibility": "private",
-      "name": "validate_status_transition",
+      "name": "handle_proposer_slashing",
       "category": {
         "Helper": [
-          "validate_status_transition",
+          "handle_proposer_slashing",
           [
-            ["current", "current : OrderState"],
-            ["new", "new : OrderState"]
+            ["current_block", "current_block : BlockNumberFor < T >"],
+            [
+              "era_info",
+              "era_info : & EraInfoStruct < EraIndex , BlockNumberFor < T > , T :: AccountId , T :: AssetBalance >"
+            ],
+            ["era", "era : EraIndex"],
+            [
+              "worker_info",
+              "worker_info : & mut WorkerInfo < T :: AssetBalance , WorkerState , EraIndex >"
+            ],
+            ["reason", "reason : SlashReason"]
           ]
         ]
       }
     },
     {
       "visibility": "private",
-      "name": "StoreProducts",
-      "category": { "Storage": ["StoreProducts", "private"] }
+      "name": "handle_voter_slashing",
+      "category": {
+        "Helper": [
+          "handle_voter_slashing",
+          [
+            [
+              "worker_info",
+              "worker_info : & WorkerInfo < T :: AssetBalance , WorkerState , EraIndex >"
+            ],
+            ["era", "era : EraIndex"],
+            ["malicious", "malicious : & T :: AccountId"],
+            ["reason", "reason : SlashReason"]
+          ]
+        ]
+      }
     },
     {
       "visibility": "public",
-      "name": "BalanceOf",
-      "category": { "Storage": ["BalanceOf", "public"] }
+      "name": "EraInfo",
+      "category": { "Storage": ["EraInfo", "public"] }
     },
     {
       "visibility": "public",
-      "name": "StoreId",
-      "category": { "Storage": ["StoreId", "public"] }
+      "name": "AssetBalanceOf",
+      "category": { "Storage": ["AssetBalanceOf", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "SlashEras",
+      "category": { "Storage": ["SlashEras", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ShareIncrement",
+      "category": { "Storage": ["ShareIncrement", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "EraDuration",
+      "category": { "Storage": ["EraDuration", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "RegisteredWorkers",
+      "category": { "Storage": ["RegisteredWorkers", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "Decimals",
+      "category": { "Storage": ["Decimals", "public"] }
     },
     {
       "visibility": "private",
-      "name": "StoreItem",
-      "category": { "Storage": ["StoreItem", "private"] }
+      "name": "AssetId",
+      "category": { "Storage": ["AssetId", "private"] }
     },
     {
       "visibility": "private",
-      "name": "StoresPerUser",
-      "category": { "Storage": ["StoresPerUser", "private"] }
+      "name": "HigherStaker",
+      "category": { "Storage": ["HigherStaker", "private"] }
     },
     {
       "visibility": "private",
-      "name": "CartItems",
-      "category": { "Storage": ["CartItems", "private"] }
-    },
-    {
-      "visibility": "public",
-      "name": "StoreProductList",
-      "category": { "Storage": ["StoreProductList", "public"] }
+      "name": "ConsensusByEra",
+      "category": { "Storage": ["ConsensusByEra", "private"] }
     },
     {
       "visibility": "private",
-      "name": "OrderItem",
-      "category": { "Storage": ["OrderItem", "private"] }
+      "name": "SlashInfoForDeposit",
+      "category": { "Storage": ["SlashInfoForDeposit", "private"] }
     },
     {
       "visibility": "public",
-      "name": "OrderId",
-      "category": { "Storage": ["OrderId", "public"] }
+      "name": "AccountIdOf",
+      "category": { "Storage": ["AccountIdOf", "public"] }
     },
     {
       "visibility": "private",
-      "name": "OrderStatus",
-      "category": { "Storage": ["OrderStatus", "private"] }
+      "name": "WorkerWithdrawResponse",
+      "category": { "Storage": ["WorkerWithdrawResponse", "private"] }
     },
     {
       "visibility": "public",
-      "name": "ProductId",
-      "category": { "Storage": ["ProductId", "public"] }
+      "name": "EraIndex",
+      "category": { "Storage": ["EraIndex", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "MaxWorkersCount",
+      "category": { "Storage": ["MaxWorkersCount", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ShareDecrement",
+      "category": { "Storage": ["ShareDecrement", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "WorkerDepositResponse",
+      "category": { "Storage": ["WorkerDepositResponse", "private"] }
+    },
+    {
+      "visibility": "private",
+      "name": "WithdrawResultConsensus",
+      "category": { "Storage": ["WithdrawResultConsensus", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "WithdrawId",
+      "category": { "Storage": ["WithdrawId", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "CurrentEra",
+      "category": { "Storage": ["CurrentEra", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "AnswerByEra",
+      "category": { "Storage": ["AnswerByEra", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "NumberOfRegisteredWorkers",
+      "category": { "Storage": ["NumberOfRegisteredWorkers", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "DepositResultConsensus",
+      "category": { "Storage": ["DepositResultConsensus", "private"] }
+    },
+    {
+      "visibility": "private",
+      "name": "ValuesByEra",
+      "category": { "Storage": ["ValuesByEra", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "DepositId",
+      "category": { "Storage": ["DepositId", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ProposingStageDuration",
+      "category": { "Storage": ["ProposingStageDuration", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "SlashInfoForPrices",
+      "category": { "Storage": ["SlashInfoForPrices", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "ProfileStringLimit",
+      "category": { "Storage": ["ProfileStringLimit", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "PoolShare",
+      "category": { "Storage": ["PoolShare", "public"] }
+    },
+    {
+      "visibility": "public",
+      "name": "VotingStageDuration",
+      "category": { "Storage": ["VotingStageDuration", "public"] }
+    },
+    {
+      "visibility": "private",
+      "name": "SlashInfoForWithdraw",
+      "category": { "Storage": ["SlashInfoForWithdraw", "private"] }
+    },
+    {
+      "visibility": "public",
+      "name": "LiquidityPool",
+      "category": { "Storage": ["LiquidityPool", "public"] }
     },
     {
       "visibility": "none",
-      "name": "StringLimit",
-      "category": { "Constant": "StringLimit" }
+      "name": "HashLengthLimit",
+      "category": { "Constant": "HashLengthLimit" }
     },
     {
       "visibility": "none",
-      "name": "DataLimit",
-      "category": { "Constant": "DataLimit" }
+      "name": "AddressLengthLimit",
+      "category": { "Constant": "AddressLengthLimit" }
     },
     {
       "visibility": "none",
-      "name": "CartItemsLimit",
-      "category": { "Constant": "CartItemsLimit" }
+      "name": "ProfileStringLimit",
+      "category": { "Constant": "ProfileStringLimit" }
     },
     {
       "visibility": "none",
-      "name": "MaxProductsPerStore",
-      "category": { "Constant": "MaxProductsPerStore" }
+      "name": "PalletId",
+      "category": { "Constant": "PalletId" }
     },
     {
       "visibility": "none",
-      "name": "MaxInventoryAmount",
-      "category": { "Constant": "MaxInventoryAmount" }
+      "name": "ConsensusPercentage",
+      "category": { "Constant": "ConsensusPercentage" }
     },
     {
       "visibility": "none",
-      "name": "SKULimit",
-      "category": { "Constant": "SKULimit" }
+      "name": "SlashPercentageMalicious",
+      "category": { "Constant": "SlashPercentageMalicious" }
     },
     {
       "visibility": "none",
-      "name": "UrlLimit",
-      "category": { "Constant": "UrlLimit" }
+      "name": "SlashPercentageInactive",
+      "category": { "Constant": "SlashPercentageInactive" }
+    },
+    {
+      "visibility": "none",
+      "name": "PricesLimit",
+      "category": { "Constant": "PricesLimit" }
+    },
+    {
+      "visibility": "none",
+      "name": "MinStakeAmount",
+      "category": { "Constant": "MinStakeAmount" }
     },
     {
       "visibility": "public",
-      "name": "StoreCreated",
-      "category": { "Events": "StoreCreated" }
+      "name": "WorkerRegistered",
+      "category": { "Events": "WorkerRegistered" }
     },
     {
       "visibility": "public",
-      "name": "StoreModified",
-      "category": { "Events": "StoreModified" }
+      "name": "WorkerUnregistered",
+      "category": { "Events": "WorkerUnregistered" }
     },
     {
       "visibility": "public",
-      "name": "ProductAdded",
-      "category": { "Events": "ProductAdded" }
+      "name": "SharesIncreased",
+      "category": { "Events": "SharesIncreased" }
     },
     {
       "visibility": "public",
-      "name": "ProductModified",
-      "category": { "Events": "ProductModified" }
+      "name": "NewEra",
+      "category": { "Events": "NewEra" }
     },
     {
       "visibility": "public",
-      "name": "OrderAdded",
-      "category": { "Events": "OrderAdded" }
+      "name": "PricesProposed",
+      "category": { "Events": "PricesProposed" }
     },
     {
       "visibility": "public",
-      "name": "RemovedStore",
-      "category": { "Events": "RemovedStore" }
+      "name": "PricesVoted",
+      "category": { "Events": "PricesVoted" }
     },
     {
       "visibility": "public",
-      "name": "RemovedProduct",
-      "category": { "Events": "RemovedProduct" }
+      "name": "PricesConsensusReached",
+      "category": { "Events": "PricesConsensusReached" }
     },
     {
       "visibility": "public",
-      "name": "AddedToCart",
-      "category": { "Events": "AddedToCart" }
+      "name": "WorkerSlashedForPrices",
+      "category": { "Events": "WorkerSlashedForPrices" }
     },
     {
       "visibility": "public",
-      "name": "OrderStatusUpdated",
-      "category": { "Events": "OrderStatusUpdated" }
+      "name": "WorkerRecovered",
+      "category": { "Events": "WorkerRecovered" }
     },
     {
       "visibility": "public",
-      "name": "InventoryUpdated",
-      "category": { "Events": "InventoryUpdated" }
+      "name": "DepositVoted",
+      "category": { "Events": "DepositVoted" }
     },
     {
       "visibility": "public",
-      "name": "RemovedFromCart",
-      "category": { "Events": "RemovedFromCart" }
+      "name": "DepositConsensusReached",
+      "category": { "Events": "DepositConsensusReached" }
     },
     {
       "visibility": "public",
-      "name": "StoreAlreadyCreated",
-      "category": { "Error": "StoreAlreadyCreated" }
+      "name": "WorkerSlashedForDeposit",
+      "category": { "Events": "WorkerSlashedForDeposit" }
     },
     {
       "visibility": "public",
-      "name": "StoreNotFound",
-      "category": { "Error": "StoreNotFound" }
+      "name": "WithdrawVoted",
+      "category": { "Events": "WithdrawVoted" }
     },
     {
       "visibility": "public",
-      "name": "ProductNotFound",
-      "category": { "Error": "ProductNotFound" }
+      "name": "WithdrawConsensusReached",
+      "category": { "Events": "WithdrawConsensusReached" }
     },
     {
       "visibility": "public",
-      "name": "YouAreNotTheStoreOwner",
-      "category": { "Error": "YouAreNotTheStoreOwner" }
+      "name": "WorkerSlashedForWithdraw",
+      "category": { "Events": "WorkerSlashedForWithdraw" }
     },
     {
       "visibility": "public",
-      "name": "OrderNotFound",
-      "category": { "Error": "OrderNotFound" }
+      "name": "StakeReturnedForUnregister",
+      "category": { "Events": "StakeReturnedForUnregister" }
     },
     {
       "visibility": "public",
-      "name": "InsufficientInventory",
-      "category": { "Error": "InsufficientInventory" }
+      "name": "WithdrawNotExecuted",
+      "category": { "Error": "WithdrawNotExecuted" }
     },
     {
       "visibility": "public",
-      "name": "InvalidOrderStatusTransition",
-      "category": { "Error": "InvalidOrderStatusTransition" }
+      "name": "UnregisterAtNotFound",
+      "category": { "Error": "UnregisterAtNotFound" }
     },
     {
       "visibility": "public",
-      "name": "EmptyCart",
-      "category": { "Error": "EmptyCart" }
+      "name": "ReclaimPeriodNotOver",
+      "category": { "Error": "ReclaimPeriodNotOver" }
     },
     {
       "visibility": "public",
-      "name": "CartFull",
-      "category": { "Error": "CartFull" }
+      "name": "WorkerNotDisable",
+      "category": { "Error": "WorkerNotDisable" }
     },
     {
       "visibility": "public",
-      "name": "OrderAlreadyExists",
-      "category": { "Error": "OrderAlreadyExists" }
+      "name": "CannotSlashYet",
+      "category": { "Error": "CannotSlashYet" }
     },
     {
       "visibility": "public",
-      "name": "TooManyProducts",
-      "category": { "Error": "TooManyProducts" }
+      "name": "AlreadySlashed",
+      "category": { "Error": "AlreadySlashed" }
     },
     {
       "visibility": "public",
-      "name": "OrderAlreadyProcessing",
-      "category": { "Error": "OrderAlreadyProcessing" }
+      "name": "WorkerVotedCorrectly",
+      "category": { "Error": "WorkerVotedCorrectly" }
     },
     {
       "visibility": "public",
-      "name": "ExcessiveInventory",
-      "category": { "Error": "ExcessiveInventory" }
+      "name": "ResultNotFound",
+      "category": { "Error": "ResultNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "DidNotVote",
+      "category": { "Error": "DidNotVote" }
+    },
+    {
+      "visibility": "public",
+      "name": "MissingVotes",
+      "category": { "Error": "MissingVotes" }
+    },
+    {
+      "visibility": "public",
+      "name": "DepositAlreadyProcessed",
+      "category": { "Error": "DepositAlreadyProcessed" }
+    },
+    {
+      "visibility": "public",
+      "name": "WorkerInactive",
+      "category": { "Error": "WorkerInactive" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidHash",
+      "category": { "Error": "InvalidHash" }
+    },
+    {
+      "visibility": "public",
+      "name": "CannotWork",
+      "category": { "Error": "CannotWork" }
+    },
+    {
+      "visibility": "public",
+      "name": "VotingExpired",
+      "category": { "Error": "VotingExpired" }
+    },
+    {
+      "visibility": "public",
+      "name": "WorkerAlreadyRegistered",
+      "category": { "Error": "WorkerAlreadyRegistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "AlreadyAnswered",
+      "category": { "Error": "AlreadyAnswered" }
+    },
+    {
+      "visibility": "public",
+      "name": "WorkerNotRegistered",
+      "category": { "Error": "WorkerNotRegistered" }
+    },
+    {
+      "visibility": "public",
+      "name": "NotHighestShareholder",
+      "category": { "Error": "NotHighestShareholder" }
+    },
+    {
+      "visibility": "public",
+      "name": "ConsensusNotReached",
+      "category": { "Error": "ConsensusNotReached" }
+    },
+    {
+      "visibility": "public",
+      "name": "NotConsensus",
+      "category": { "Error": "NotConsensus" }
+    },
+    {
+      "visibility": "public",
+      "name": "ProposerNotFound",
+      "category": { "Error": "ProposerNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "ConsensusAlreadyReached",
+      "category": { "Error": "ConsensusAlreadyReached" }
+    },
+    {
+      "visibility": "public",
+      "name": "ZeroAmountStaked",
+      "category": { "Error": "ZeroAmountStaked" }
+    },
+    {
+      "visibility": "public",
+      "name": "EraInfoNotFound",
+      "category": { "Error": "EraInfoNotFound" }
+    },
+    {
+      "visibility": "public",
+      "name": "NotInProposingStage",
+      "category": { "Error": "NotInProposingStage" }
+    },
+    {
+      "visibility": "public",
+      "name": "PricesNotProposed",
+      "category": { "Error": "PricesNotProposed" }
+    },
+    {
+      "visibility": "public",
+      "name": "NotInVotingStage",
+      "category": { "Error": "NotInVotingStage" }
+    },
+    {
+      "visibility": "public",
+      "name": "InvalidEra",
+      "category": { "Error": "InvalidEra" }
+    },
+    {
+      "visibility": "public",
+      "name": "DidNotHadToVote",
+      "category": { "Error": "DidNotHadToVote" }
+    },
+    {
+      "visibility": "public",
+      "name": "TooManyWorkers",
+      "category": { "Error": "TooManyWorkers" }
+    },
+    {
+      "visibility": "public",
+      "name": "InsufficientStakedAmount",
+      "category": { "Error": "InsufficientStakedAmount" }
     }
   ]
 }
