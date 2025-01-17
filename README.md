@@ -36,7 +36,10 @@ The general goal is to automate as much as possible the current security auditin
     - ✅ Pallet model data structure
     - ✅ Threat model data structure
     - Asset-to-threat mapping function
+    - Severity ranking function
     - Pallet-specific unit tests generation macro
+    - State machine generation
+    - Economic threats & game theory modeling - consensus modeling
     - Code Refactor
     - CLI Interface
 

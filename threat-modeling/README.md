@@ -49,5 +49,9 @@
 - [hardest] Deterministic output parser for LLM results
 - ✅ Parse discovered assets into desired internal data structure
 - PoC unit test generation using Rust macros to handle substrate types
+    - ✅ Parse input as specific types -> This might still not working yet because currently cannot test the impl
+    - Have access to the pallet-specific types
+    - Generate random test cases according to the types -> Type-aware generation, similar to the concept in fuzzing
+    - Put generated tests into the tests.rs for real testing -> This will be tricky, but maybe achievable through module import in the tests.rs file
 - Asset <-> threat mapping function
 - Automated unit test generation through macros
