@@ -20,12 +20,3 @@ async fn main() {
     let assets = parse_asset_inventory_into_asset_model(json);
     println!("Parsed assets: {:?}", assets);
 }
-
-#[auto_test_args(4, 5)]
-pub fn sample_function_with_args(a: i32, b: i32) -> Result<(), &'static str> {
-    if a + b > 5 {
-        Ok(())
-    } else {
-        Err("Sum is too small")
-    }
-}
