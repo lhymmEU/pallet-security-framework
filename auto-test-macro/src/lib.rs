@@ -2,8 +2,8 @@ extern crate proc_macro;
 
 use proc_macro::TokenStream;
 use quote::quote;
-use syn::ExprArray;
-use syn::{parse_macro_input, ItemFn, Result, Token, Expr, punctuated::Punctuated};
+use syn::LitBool;
+use syn::{parse_macro_input, ItemFn, Result, Token, Expr, punctuated::Punctuated, Lit, ExprLit};
 use syn::parse::{Parse, ParseStream};
 
 // A convinient mental model for procedural macros:
@@ -75,14 +75,21 @@ pub fn auto_test_args(attr: TokenStream, item: TokenStream) -> TokenStream {
 // A customized struct to parse the arguments
 struct Args {
     cases: Vec<Expr>, // Store the test cases as expressions
+    expected_results: Expr, // True for success, false for failure
 }
 
 // Customized parsing logic for syn crate to convert the input TokenStream into a structured format
 impl Parse for Args {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut cases = Vec::new();
-        
-        // Parse test cases until we hit '&'
+        let mut expected_results = Expr::Lit(ExprLit {
+            attrs: vec![], // Empty attributes
+            lit: Lit::Bool(LitBool {
+                value: true,
+                span: proc_macro2::Span::call_site(), // Default span
+            }),
+        });
+        // Parse test cases
         while !input.is_empty() {
             let expr: Expr = input.parse()?;
             cases.push(expr);
@@ -90,9 +97,15 @@ impl Parse for Args {
             if input.peek(Token![,]) {
                 input.parse::<Token![,]>()?;
             }
+
+            if input.peek(Token![&]) {
+                input.parse::<Token![&]>()?;
+                expected_results = input.parse::<Expr>()?;
+                break;
+            }
         }
 
-        Ok(Args { cases })
+        Ok(Args { cases, expected_results })
     }
 }
 
@@ -101,6 +114,8 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     let args = parse_macro_input!(attr as Args);
     let input = parse_macro_input!(item as ItemFn);
     let fn_name = &input.sig.ident;
+    let expected_results = args.expected_results;
+    let mut test_name_suffix = "failure";
     // Generate test cases based on parsed arguments
     let test_fns = args.cases.iter().enumerate().map(|(i, case)| {
         let test_fn_name = quote::format_ident!("test_{}_{}", fn_name, i);
@@ -110,13 +125,27 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
             #[test]
             fn #test_fn_name() {
                 let result = #fn_name #case; // Apply the parsed test case arguments
-                assert!(result.is_ok(), "Test case {:?} failed", #case);
+                if #expected_results {
+                    assert!(result.is_ok(), "Test case {:?} failed", #case);
+                } else {
+                    assert!(result.is_err(), "Test case {:?} should fail", #case);
+                }
             }
         }
     });
 
+    // Determine the test name suffix based on the expected results
+    if let Some(boolean_value) = match expected_results {
+        Expr::Lit(ExprLit { lit: Lit::Bool(LitBool { value, .. }), .. }) => Some(value),
+        _ => None,
+    } {
+        if boolean_value {
+            test_name_suffix = "success";
+        }
+    }
+    
     // Dynamically generate the test module name to avoid name collision when multiple macros are used in the same file
-    let test_name = quote::format_ident!("{}_tests", fn_name);
+    let test_name = quote::format_ident!("{}_tests_{}", fn_name, test_name_suffix);
 
     // Expand the original function and include the generated test functions
     let expanded = quote! {

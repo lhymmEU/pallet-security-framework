@@ -42,6 +42,8 @@ The general goal is to automate as much as possible the current security auditin
     - Economic threats & game theory modeling - consensus modeling
     - Code Refactor
     - CLI Interface
+- Fuzzing
+    - Chopsticks for network simulation: https://docs.polkadot.com/develop/toolkit/parachains/fork-chains/chopsticks/
 
 
 
