@@ -1,6 +1,5 @@
 use threat_modeling::utils::helpers::*;
 use std::path::Path;
-use auto_test_macro::auto_test_args;
 
 #[tokio::main]
 async fn main() {

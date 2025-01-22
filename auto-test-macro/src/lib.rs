@@ -1,10 +1,12 @@
 extern crate proc_macro;
+mod types;
 
 use proc_macro::TokenStream;
 use quote::quote;
 use syn::LitBool;
-use syn::{parse_macro_input, ItemFn, Result, Token, Expr, punctuated::Punctuated, Lit, ExprLit};
+use syn::{parse_macro_input, ItemFn, Result, Token, Expr, punctuated::Punctuated, Lit, ExprLit, LitInt};
 use syn::parse::{Parse, ParseStream};
+use types::Balance;
 
 // A convinient mental model for procedural macros:
 // Frontend: Input codes -> syn crate -> intermediate representation (This can be AST or customized types)
@@ -75,14 +77,14 @@ pub fn auto_test_args(attr: TokenStream, item: TokenStream) -> TokenStream {
 // A customized struct to parse the arguments
 struct Args {
     cases: Vec<Expr>, // Store the test cases as expressions
-    expected_results: Expr, // True for success, false for failure
+    success_or_fail: Expr, // True for tests that expect success, false for failure
 }
 
 // Customized parsing logic for syn crate to convert the input TokenStream into a structured format
 impl Parse for Args {
     fn parse(input: ParseStream) -> Result<Self> {
         let mut cases = Vec::new();
-        let mut expected_results = Expr::Lit(ExprLit {
+        let mut success_or_fail = Expr::Lit(ExprLit {
             attrs: vec![], // Empty attributes
             lit: Lit::Bool(LitBool {
                 value: true,
@@ -100,12 +102,12 @@ impl Parse for Args {
 
             if input.peek(Token![&]) {
                 input.parse::<Token![&]>()?;
-                expected_results = input.parse::<Expr>()?;
+                success_or_fail = input.parse::<Expr>()?;
                 break;
             }
         }
 
-        Ok(Args { cases, expected_results })
+        Ok(Args { cases, success_or_fail })
     }
 }
 
@@ -114,7 +116,7 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     let args = parse_macro_input!(attr as Args);
     let input = parse_macro_input!(item as ItemFn);
     let fn_name = &input.sig.ident;
-    let expected_results = args.expected_results;
+    let success_or_fail = args.success_or_fail;
     let mut test_name_suffix = "failure";
     // Generate test cases based on parsed arguments
     let test_fns = args.cases.iter().enumerate().map(|(i, case)| {
@@ -125,7 +127,7 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
             #[test]
             fn #test_fn_name() {
                 let result = #fn_name #case; // Apply the parsed test case arguments
-                if #expected_results {
+                if #success_or_fail {
                     assert!(result.is_ok(), "Test case {:?} failed", #case);
                 } else {
                     assert!(result.is_err(), "Test case {:?} should fail", #case);
@@ -135,7 +137,7 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     });
 
     // Determine the test name suffix based on the expected results
-    if let Some(boolean_value) = match expected_results {
+    if let Some(boolean_value) = match success_or_fail {
         Expr::Lit(ExprLit { lit: Lit::Bool(LitBool { value, .. }), .. }) => Some(value),
         _ => None,
     } {
@@ -143,7 +145,7 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
             test_name_suffix = "success";
         }
     }
-    
+
     // Dynamically generate the test module name to avoid name collision when multiple macros are used in the same file
     let test_name = quote::format_ident!("{}_tests_{}", fn_name, test_name_suffix);
 
@@ -161,4 +163,19 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     };
 
     expanded.into()
+}
+
+// ---- helper functions ----
+// Generate extreme values for a given type, say Balance
+fn generate_extreme_values(specific_type: &str) -> Vec<Expr> {
+    match specific_type {
+        "Balance" => vec![Expr::Lit(ExprLit {
+            attrs: vec![],
+            lit: Lit::Int(LitInt::new(&u128::MIN.to_string(), proc_macro2::Span::call_site())),
+        }), Expr::Lit(ExprLit {
+            attrs: vec![],
+            lit: Lit::Int(LitInt::new(&u128::MAX.to_string(), proc_macro2::Span::call_site())),
+        })],
+        _ => vec![],
+    }
 }
