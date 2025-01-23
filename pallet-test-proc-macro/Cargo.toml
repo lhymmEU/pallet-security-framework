@@ -1,5 +1,5 @@
 [package]
-name = "auto-test-macro"
+name = "pallet-test-proc-macro"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,3 +13,4 @@ proc-macro2 = "1.0.93"
 quote = "1.0.38"
 sp-runtime = "40.0.0"
 syn = { version = "2.0.96", features = ["full"] }
+pallet-test-decl-macro = { path = "../pallet-test-decl-macro" }

@@ -338,18 +338,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1505bd5d3d116872e7271a6d4e16d81d0c8570876c8de68093a09ac269d8aac0"
 
 [[package]]
-name = "auto-test-macro"
-version = "0.1.0"
-dependencies = [
- "frame-support",
- "frame-system",
- "proc-macro2",
- "quote",
- "sp-runtime",
- "syn 2.0.96",
-]
-
-[[package]]
 name = "auto_enums"
 version = "0.8.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2756,6 +2744,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b15813163c1d831bf4a13c3610c05c0d03b39feb07f7e09fa234dac9b15aaf39"
 
 [[package]]
+name = "pallet-test-decl-macro"
+version = "0.1.0"
+dependencies = [
+ "proc-macro2",
+ "syn 2.0.96",
+]
+
+[[package]]
+name = "pallet-test-proc-macro"
+version = "0.1.0"
+dependencies = [
+ "frame-support",
+ "frame-system",
+ "pallet-test-decl-macro",
+ "proc-macro2",
+ "quote",
+ "sp-runtime",
+ "syn 2.0.96",
+]
+
+[[package]]
 name = "parity-bip39"
 version = "2.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4736,8 +4745,8 @@ dependencies = [
 name = "threat-modeling"
 version = "0.1.0"
 dependencies = [
- "auto-test-macro",
  "langchain-rust",
+ "pallet-test-proc-macro",
  "serde",
  "serde_json",
  "tokio",

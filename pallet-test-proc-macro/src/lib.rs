@@ -6,7 +6,7 @@ use quote::quote;
 use syn::LitBool;
 use syn::{parse_macro_input, ItemFn, Result, Token, Expr, punctuated::Punctuated, Lit, ExprLit, LitInt};
 use syn::parse::{Parse, ParseStream};
-use types::Balance;
+use pallet_test_decl_macro::generate_extreme_values;
 
 // A convinient mental model for procedural macros:
 // Frontend: Input codes -> syn crate -> intermediate representation (This can be AST or customized types)
@@ -121,7 +121,6 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     // Generate test cases based on parsed arguments
     let test_fns = args.cases.iter().enumerate().map(|(i, case)| {
         let test_fn_name = quote::format_ident!("test_{}_{}", fn_name, i);
-        // Strip the last element from the test case tuple and make the rest as type Expr
 
         quote! {
             #[test]
@@ -165,17 +164,39 @@ pub fn auto_test_dispatchable(attr: TokenStream, item: TokenStream) -> TokenStre
     expanded.into()
 }
 
-// ---- helper functions ----
-// Generate extreme values for a given type, say Balance
-fn generate_extreme_values(specific_type: &str) -> Vec<Expr> {
-    match specific_type {
-        "Balance" => vec![Expr::Lit(ExprLit {
-            attrs: vec![],
-            lit: Lit::Int(LitInt::new(&u128::MIN.to_string(), proc_macro2::Span::call_site())),
-        }), Expr::Lit(ExprLit {
-            attrs: vec![],
-            lit: Lit::Int(LitInt::new(&u128::MAX.to_string(), proc_macro2::Span::call_site())),
-        })],
-        _ => vec![],
-    }
+#[proc_macro_attribute]
+pub fn auto_test_dispatchable_extreme(_attr: TokenStream, item: TokenStream) -> TokenStream {
+    let input = parse_macro_input!(item as ItemFn);
+    let fn_name = &input.sig.ident;
+
+    let extreme_values = generate_extreme_values!();
+    // Generate tests for extreme values
+    let test_extremes = extreme_values.iter().enumerate().map(|(i, extreme_value)| {
+        let test_extreme_fn_name = quote::format_ident!("test_extreme_{}_{}", fn_name, i);
+        quote! {
+            #[test]
+            fn #test_extreme_fn_name() {
+                let result = #fn_name(#extreme_value);
+                assert!(result.is_ok(), "Test case {:?} failed", #extreme_value);
+            }
+        }
+    });
+
+    let test_name = quote::format_ident!("{}_extreme_tests", fn_name);
+
+    let expanded = quote! {
+        #input
+
+        #[cfg(test)]
+        mod #test_name {
+            use super::*;
+
+            // Interpolate with 0 or more test functions
+            #(#test_extremes)*
+        }
+    };
+
+    expanded.into()
 }
+
+// ---- helper functions ------------------------------------------------------------

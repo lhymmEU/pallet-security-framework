@@ -1,5 +1,4 @@
 [workspace]
 members = [ 
-    "asset-discovery", "auto-test-macro",
-    "threat-modeling",
+    "asset-discovery", "pallet-test-decl-macro", "pallet-test-proc-macro", "threat-modeling",
 ]

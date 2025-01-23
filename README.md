@@ -38,6 +38,7 @@ The general goal is to automate as much as possible the current security auditin
     - Asset-to-threat mapping function
     - Severity ranking function
     - Pallet-specific unit tests generation macro
+    - Investigate cucumber & Rust mini-DSLs: https://cucumber-rs.github.io/cucumber/main/
     - State machine generation
     - Economic threats & game theory modeling - consensus modeling
     - Code Refactor
